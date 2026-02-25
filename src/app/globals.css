@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: 221.2 83.2% 53.3%; /* Professional Blue */
+}
+
+body {
+  @apply bg-slate-50 text-slate-900;
+}
