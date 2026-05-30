@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "@/context/Providers";
+import { Header } from "@/components/navigation/Header";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,7 +34,7 @@ export default function RootLayout({
       >
         <Providers>
           <div className="relative flex min-h-screen flex-col">
-            {/* Global Navigation or Progress Bars could go here */}
+            <Header />
             <main className="flex-1">{children}</main>
           </div>
         </Providers>
