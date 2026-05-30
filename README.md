@@ -59,11 +59,61 @@ Install dependencies:
 
 npm install
 
+Set up environment variables:
+
+cp .env.example .env.local
+
+Edit `.env.local` and fill in the required values (see [Environment Variables](#environment-variables) below).
+
 Run the development server:
 
 npm run dev
 
 Your application will be available at http://localhost:3000.
+
+## Environment Variables
+
+Copy `.env.example` to `.env.local` before running the app. Each variable is described below.
+
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `NEXT_PUBLIC_API_URL` | **Yes** | — | Backend REST API base URL. Provided by the backend team. |
+| `NEXT_PUBLIC_STELLAR_NETWORK` | No | `testnet` | Stellar network to connect to. Accepted values: `testnet` \| `mainnet`. |
+| `NEXT_PUBLIC_HORIZON_URL` | No | `https://horizon-testnet.stellar.org` | Horizon API endpoint used to submit transactions and query the ledger. |
+
+### How to obtain each value
+
+- **`NEXT_PUBLIC_API_URL`** — Contact the backend team. For local development the backend defaults to `http://localhost:3000/api/v1`.
+- **`NEXT_PUBLIC_STELLAR_NETWORK`** — Use `testnet` for development and staging. Use `mainnet` only for production deployments.
+- **`NEXT_PUBLIC_HORIZON_URL`** — Provided by the [Stellar Foundation](https://developers.stellar.org/docs/data/horizon). Testnet: `https://horizon-testnet.stellar.org`. Mainnet: `https://horizon.stellar.org`. You may also run a self-hosted Horizon instance.
+
+### Secrets that must NOT be committed
+
+The following files are already listed in `.gitignore` and must never be committed to version control:
+
+- `.env.local` — contains your real environment values
+- `.env` — any plain `.env` file
+- `*.pem` — private key files
+
+If you accidentally commit a secret, rotate it immediately and rewrite git history.
+
+## Switching to Mainnet
+
+To point the frontend at the Stellar mainnet, update these variables in `.env.local`:
+
+```
+NEXT_PUBLIC_STELLAR_NETWORK=mainnet
+NEXT_PUBLIC_HORIZON_URL=https://horizon.stellar.org
+NEXT_PUBLIC_API_URL=https://api.healthy-stellar.io/v1
+```
+
+**Security implications:**
+
+- Mainnet transactions use **real XLM**. Mistakes cannot be reversed.
+- Ensure the backend API URL also points to the production environment.
+- Never expose private keys or mnemonics in environment variables or source code.
+- Review all smart contract interactions before deploying to mainnet.
+- Use a secrets manager (e.g., Vercel Environment Variables, AWS Secrets Manager) to inject production values — do not store them in any committed file.
 
 Publish your first package
 Footer
