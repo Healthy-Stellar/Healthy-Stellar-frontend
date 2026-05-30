@@ -2,7 +2,57 @@ export type UserRole = 'PATIENT' | 'DOCTOR' | 'HOSPITAL' | 'ADMIN';
 
 export interface User {
   id: string;
-  address: string; // Stellar public key
+  address: string;
   role: UserRole;
   name: string;
+}
+
+export interface MedicalRecord {
+  id: string;
+  date: string;
+  doctorName: string;
+  diagnosis: string;
+  prescription?: string;
+  notes?: string;
+  patientAddress: string;
+}
+
+export interface ShareToken {
+  token: string;
+  expiresAt: string;
+  providerAddress: string;
+}
+
+export interface Doctor {
+  id: string;
+  name: string;
+  specialty: string;
+  address: string;
+}
+
+export interface TimeSlot {
+  id: string;
+  datetime: string;
+  available: boolean;
+}
+
+export interface Appointment {
+  id: string;
+  doctorId: string;
+  doctorName: string;
+  patientAddress: string;
+  patientName?: string;
+  datetime: string;
+  type: 'in-person' | 'telemedicine';
+  notes?: string;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  fee: number;
+  txHash?: string;
+}
+
+export interface NewRecordPayload {
+  patientAddress: string;
+  diagnosis: string;
+  prescription?: string;
+  notes?: string;
 }
