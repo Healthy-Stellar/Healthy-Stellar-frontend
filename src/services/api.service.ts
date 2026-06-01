@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { MedicalRecord, ShareToken, Doctor, TimeSlot, Appointment, NewRecordPayload } from '@/types';
+import { MedicalRecord, ShareToken, Doctor, TimeSlot, Appointment, NewRecordPayload, EncryptedRecord } from '@/types';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -38,3 +38,9 @@ export const createRecord = (payload: NewRecordPayload) =>
   api.post<MedicalRecord>('/records', payload).then((r) => r.data);
 
 export default api;
+
+// Encrypted record upload
+export const uploadEncryptedRecord = (formData: FormData) =>
+  api.post<EncryptedRecord>('/records/encrypted', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }).then((r) => r.data);
