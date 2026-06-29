@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useWalletStore } from '@/store/useWalletStore';
 import { UserRole } from '@/types';
 import api from '@/services/api.service';
@@ -11,11 +11,62 @@ interface Props {
 
 type WalletOption = 'freighter' | 'albedo';
 
+function useFocusTrap(ref: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+
+    const focusables = () => el.querySelectorAll<HTMLElement>(focusableSelector);
+    const first = () => focusables()[0];
+    const last = () => { const f = focusables(); return f[f.length - 1]; };
+
+    first()?.focus();
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+
+      const f = focusables();
+      if (f.length === 0) return;
+
+      if (e.shiftKey) {
+        if (document.activeElement === f[0]) {
+          e.preventDefault();
+          f[f.length - 1].focus();
+        }
+      } else {
+        if (document.activeElement === f[f.length - 1]) {
+          e.preventDefault();
+          f[0].focus();
+        }
+      }
+    }
+
+    el.addEventListener('keydown', handleKeyDown);
+    return () => {
+      el.removeEventListener('keydown', handleKeyDown);
+      previouslyFocused?.focus();
+    };
+  }, [ref]);
+}
 
 export default function ConnectWalletModal({ onClose }: Props) {
   const { setWallet, network } = useWalletStore();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<WalletOption | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap(modalRef);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') onClose();
+  }, [onClose]);
 
   async function connectFreighter() {
     if (!window.freighter) {
@@ -63,11 +114,11 @@ export default function ConnectWalletModal({ onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" role="dialog" aria-modal="true" aria-labelledby="connect-wallet-title" onKeyDown={handleKeyDown}>
+      <div ref={modalRef} className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-slate-900">Connect Wallet</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+          <h2 id="connect-wallet-title" className="text-lg font-semibold text-slate-900">Connect Wallet</h2>
+          <button onClick={onClose} aria-label="Close dialog" className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
         </div>
 
         {error && (

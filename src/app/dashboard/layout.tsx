@@ -159,7 +159,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
 
           <div className="flex items-center gap-2">
-            <button className="btn-icon rounded-[9px]">
+            <button className="btn-icon rounded-[9px]" aria-label="Notifications">
               <Bell className="w-4 h-4" />
             </button>
             <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"

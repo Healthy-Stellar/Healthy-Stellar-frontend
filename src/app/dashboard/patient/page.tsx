@@ -23,7 +23,7 @@ function Sparkline({ values, color }: { values: number[]; color: string }) {
     .map((v, i) => `${i * step},${h - ((v - min) / range) * h}`)
     .join(' ');
   return (
-    <svg width={w} height={h} className="overflow-visible">
+    <svg width={w} height={h} className="overflow-visible" aria-hidden="true">
       <polyline points={points} fill="none" stroke={color} strokeWidth="1.5"
                 strokeLinecap="round" strokeLinejoin="round" opacity="0.8" />
     </svg>
@@ -35,7 +35,7 @@ function RingChart({ pct, size = 44 }: { pct: number; size?: number }) {
   const r = (size - 6) / 2;
   const circ = 2 * Math.PI * r;
   return (
-    <svg width={size} height={size} className="-rotate-90">
+    <svg width={size} height={size} className="-rotate-90" aria-hidden="true">
       <circle cx={size / 2} cy={size / 2} r={r} fill="none"
               stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
       <circle cx={size / 2} cy={size / 2} r={r} fill="none"
@@ -293,6 +293,7 @@ export default function PatientDashboard() {
                     <p className="text-2xs text-text-3 truncate">Expires {g.expiry}</p>
                   </div>
                   <button className="btn-icon w-7 h-7 rounded-lg"
+                          aria-label={g.active ? 'Revoke access' : 'Grant access'}
                           style={g.active ? { color: '#00C896' } : {}}>
                     {g.active ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
                   </button>
@@ -306,7 +307,7 @@ export default function PatientDashboard() {
                style={{ background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.07)' }}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold text-text-1">Upcoming</h2>
-              <button className="btn-icon w-6 h-6 rounded-md">
+              <button className="btn-icon w-6 h-6 rounded-md" aria-label="Add appointment">
                 <Plus className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -366,7 +367,7 @@ export default function PatientDashboard() {
               <div className="flex items-center gap-4 shrink-0 ml-4">
                 <span className="text-xs font-mono text-text-3 hidden sm:block">{ev.hash}</span>
                 <span className="text-xs text-text-3">{ev.time}</span>
-                <button className="btn-icon w-6 h-6 rounded-md">
+                <button className="btn-icon w-6 h-6 rounded-md" aria-label="View on-chain transaction">
                   <ArrowUpRight className="w-3 h-3" />
                 </button>
               </div>

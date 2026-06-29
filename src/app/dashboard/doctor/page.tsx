@@ -20,7 +20,7 @@ function Sparkline({ values, color }: { values: number[]; color: string }) {
   const step = w / (values.length - 1);
   const pts = values.map((v, i) => `${i * step},${h - ((v - min) / range) * h}`).join(' ');
   return (
-    <svg width={w} height={h} className="overflow-visible">
+    <svg width={w} height={h} className="overflow-visible" aria-hidden="true">
       <polyline points={pts} fill="none" stroke={color} strokeWidth="1.5"
                 strokeLinecap="round" strokeLinejoin="round" opacity="0.8" />
     </svg>
@@ -358,7 +358,7 @@ export default function DoctorDashboard() {
               </div>
               <div className="flex items-center gap-4 shrink-0 ml-4">
                 <span className="text-xs text-text-3">{ev.time}</span>
-                <button className="btn-icon w-6 h-6 rounded-md">
+                <button className="btn-icon w-6 h-6 rounded-md" aria-label="View on-chain transaction">
                   <ArrowUpRight className="w-3 h-3" />
                 </button>
               </div>
