@@ -85,9 +85,9 @@ function BookingFlow() {
   return (
     <div className="space-y-6">
       {/* Step indicator */}
-      <div className="flex items-center gap-2 text-xs text-slate-400">
+      <div className="flex items-center gap-2 text-xs text-[--text-3]">
         {(['search', 'slots', 'form'] as Step[]).map((s, i) => (
-          <span key={s} className={`flex items-center gap-1 ${step === s ? 'text-blue-600 font-medium' : ''}`}>
+          <span key={s} className={`flex items-center gap-1 ${step === s ? 'text-[--green] font-medium' : ''}`}>
             {i > 0 && <span>›</span>}
             {s === 'search' ? 'Find Doctor' : s === 'slots' ? 'Pick Slot' : 'Book & Pay'}
           </span>
@@ -100,13 +100,13 @@ function BookingFlow() {
 
       {step === 'slots' && doctor && (
         <div>
-          <button onClick={() => setStep('search')} className="text-xs text-slate-400 hover:text-slate-600 mb-3">← Back</button>
-          <p className="font-semibold text-slate-900 mb-4">Dr. {doctor.name} — {doctor.specialty}</p>
+          <button onClick={() => setStep('search')} className="text-xs text-[--text-3] hover:text-[--text-1] mb-3">← Back</button>
+          <p className="font-semibold text-[--text-1] mb-4">Dr. {doctor.name} — {doctor.specialty}</p>
           <SlotPicker doctorId={doctor.id} selected={slot} onSelect={setSlot} />
           {slot && (
             <button
               onClick={() => setStep('form')}
-              className="mt-4 w-full rounded-md bg-blue-600 py-2 text-sm font-semibold text-white hover:bg-blue-500"
+              className="mt-4 w-full rounded-md bg-[--green] py-2 text-sm font-semibold text-[#030D09] hover:bg-[#00DCA6]"
             >
               Continue
             </button>
@@ -116,10 +116,10 @@ function BookingFlow() {
 
       {step === 'form' && doctor && slot && (
         <div>
-          <button onClick={() => setStep('slots')} className="text-xs text-slate-400 hover:text-slate-600 mb-3">← Back</button>
+          <button onClick={() => setStep('slots')} className="text-xs text-[--text-3] hover:text-[--text-1] mb-3">← Back</button>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Appointment Type</label>
+              <label className="block text-xs font-medium text-[--text-2] mb-1">Appointment Type</label>
               <div className="flex gap-3">
                 {(['in-person', 'telemedicine'] as const).map((t) => (
                   <label key={t} className="flex items-center gap-1.5 text-sm cursor-pointer">
@@ -137,17 +137,17 @@ function BookingFlow() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Notes (optional)</label>
+              <label className="block text-xs font-medium text-[--text-2] mb-1">Notes (optional)</label>
               <textarea
                 rows={2}
                 value={form.notes}
                 onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                className="w-full rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-md border border-[--border] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[--green]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Payment Method</label>
+              <label className="block text-xs font-medium text-[--text-2] mb-1">Payment Method</label>
               <div className="flex gap-3">
                 {(['stellar', 'traditional'] as const).map((m) => (
                   <label key={m} className="flex items-center gap-1.5 text-sm cursor-pointer">
@@ -164,11 +164,11 @@ function BookingFlow() {
               </div>
             </div>
 
-            <div className="rounded-lg bg-slate-50 p-3 text-sm">
-              <p className="text-slate-600">
+            <div className="rounded-lg bg-[--bg-inset] p-3 text-sm">
+              <p className="text-[--text-2]">
                 <span className="font-medium">Dr. {doctor.name}</span> · {new Date(slot.datetime).toLocaleString()}
               </p>
-              <p className="text-slate-500 text-xs mt-0.5">Fee: {FEE} XLM</p>
+              <p className="text-[--text-2] text-xs mt-0.5">Fee: {FEE} XLM</p>
             </div>
 
             {bookMutation.isError && (
@@ -178,7 +178,7 @@ function BookingFlow() {
             <button
               onClick={() => bookMutation.mutate()}
               disabled={bookMutation.isPending}
-              className="w-full rounded-md bg-blue-600 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
+              className="w-full rounded-md bg-[--green] py-2 text-sm font-semibold text-[#030D09] hover:bg-[#00DCA6] disabled:opacity-50"
             >
               {bookMutation.isPending ? 'Processing…' : 'Confirm & Pay'}
             </button>
@@ -194,11 +194,11 @@ export default function AppointmentsPage() {
     <ProtectedRoute requiredRole="PATIENT">
       <div className="mx-auto max-w-3xl px-4 py-8 space-y-10">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-6">Book an Appointment</h1>
+          <h1 className="text-2xl font-bold text-[--text-1] mb-6">Book an Appointment</h1>
           <BookingFlow />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Upcoming Appointments</h2>
+          <h2 className="text-lg font-semibold text-[--text-1] mb-4">Upcoming Appointments</h2>
           <UpcomingAppointments />
         </div>
       </div>

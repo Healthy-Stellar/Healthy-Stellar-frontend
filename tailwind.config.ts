@@ -9,6 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        primary: 'var(--primary)',
         green: {
           DEFAULT: '#00C896',
           50:  '#E6FFF8',
@@ -23,21 +24,21 @@ const config: Config = {
           900: '#002818',
         },
         surface: {
-          base:   '#0B0E0D',
-          raised: '#111614',
-          card:   '#161B19',
-          inset:  '#1A201E',
-          hover:  '#1F2724',
+          base:   'var(--bg-base)',
+          raised: 'var(--bg-raised)',
+          card:   'var(--bg-card)',
+          inset:  'var(--bg-inset)',
+          hover:  'var(--bg-hover)',
         },
         border: {
-          DEFAULT: 'rgba(255,255,255,0.07)',
-          focus:   'rgba(0,200,150,0.35)',
+          DEFAULT: 'var(--border)',
+          focus:   'var(--border-focus)',
           strong:  'rgba(255,255,255,0.12)',
         },
         text: {
-          1: '#F0F5F3',
-          2: '#8E9E99',
-          3: '#4E5E5A',
+          1: 'var(--text-1)',
+          2: 'var(--text-2)',
+          3: 'var(--text-3)',
         },
       },
       fontFamily: {

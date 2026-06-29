@@ -27,7 +27,7 @@ const STYLES: Record<ToastType, string> = {
   success: 'bg-green-600',
   error: 'bg-red-600',
   warning: 'bg-yellow-500',
-  info: 'bg-blue-600',
+  info: 'bg-[--green]',
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {

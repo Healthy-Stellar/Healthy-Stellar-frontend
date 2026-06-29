@@ -115,10 +115,10 @@ export default function ConnectWalletModal({ onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" role="dialog" aria-modal="true" aria-labelledby="connect-wallet-title" onKeyDown={handleKeyDown}>
-      <div ref={modalRef} className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
+      <div ref={modalRef} className="bg-[--bg-card] rounded-xl shadow-xl w-full max-w-sm p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 id="connect-wallet-title" className="text-lg font-semibold text-slate-900">Connect Wallet</h2>
-          <button onClick={onClose} aria-label="Close dialog" className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+          <h2 id="connect-wallet-title" className="text-lg font-semibold text-[--text-1]">Connect Wallet</h2>
+          <button onClick={onClose} aria-label="Close dialog" className="text-[--text-3] hover:text-[--text-1] text-xl leading-none">&times;</button>
         </div>
 
         {error && (
@@ -129,20 +129,20 @@ export default function ConnectWalletModal({ onClose }: Props) {
           <button
             onClick={connectFreighter}
             disabled={!!loading}
-            className="flex items-center justify-center gap-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 w-full rounded-lg border border-[--border] px-4 py-3 text-sm font-medium hover:bg-[--bg-hover] disabled:opacity-50"
           >
             {loading === 'freighter' ? 'Connecting…' : '🔑 Freighter'}
           </button>
           <button
             onClick={connectAlbedo}
             disabled={!!loading}
-            className="flex items-center justify-center gap-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 w-full rounded-lg border border-[--border] px-4 py-3 text-sm font-medium hover:bg-[--bg-hover] disabled:opacity-50"
           >
             {loading === 'albedo' ? 'Connecting…' : '🌐 Albedo'}
           </button>
         </div>
 
-        <p className="mt-4 text-xs text-slate-400 text-center">Network: {network}</p>
+        <p className="mt-4 text-xs text-[--text-3] text-center">Network: {network}</p>
       </div>
     </div>
   );
