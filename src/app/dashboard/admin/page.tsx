@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import {
   Users, ShieldCheck, Activity, AlertTriangle,
@@ -9,6 +9,7 @@ import {
   UserCheck, FileText, Server, Database,
   RefreshCw, Eye, ArrowUpRight
 } from 'lucide-react';
+import { KpiGridSkeleton, DashboardSkeleton } from '@/components/skeletons';
 
 /* ─── Types ─────────────────────────────────────────────────────── */
 type Role = 'PATIENT' | 'DOCTOR' | 'HOSPITAL' | 'ADMIN';
@@ -132,6 +133,12 @@ function AdminDashboardContent() {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<Role | 'ALL'>('ALL');
   const [activeTab, setActiveTab] = useState<'users' | 'approvals' | 'audit'>('users');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(t);
+  }, []);
 
   const totalUsers    = users.length;
   const pendingCount  = requests.length;
@@ -202,14 +209,21 @@ function AdminDashboardContent() {
       </div>
 
       {/* ── KPI cards ────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-7">
-        <StatCard icon={Users}         label="Total Users"         value={totalUsers}     sub={`${activeCount} active`}           />
-        <StatCard icon={Clock}         label="Pending Approvals"   value={pendingCount}   sub="Awaiting review"   accent="#FCD34D" />
-        <StatCard icon={ShieldCheck}   label="Active Sessions"     value={38}             sub="Across all roles"  accent="#60A5FA" />
-        <StatCard icon={AlertTriangle} label="Suspended Accounts"  value={suspendedCount} sub="Flagged or inactive" accent="#F87171" />
-      </div>
+      {isLoading ? (
+        <KpiGridSkeleton count={4} />
+      ) : (
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-7">
+          <StatCard icon={Users}         label="Total Users"         value={totalUsers}     sub={`${activeCount} active`}           />
+          <StatCard icon={Clock}         label="Pending Approvals"   value={pendingCount}   sub="Awaiting review"   accent="#FCD34D" />
+          <StatCard icon={ShieldCheck}   label="Active Sessions"     value={38}             sub="Across all roles"  accent="#60A5FA" />
+          <StatCard icon={AlertTriangle} label="Suspended Accounts"  value={suspendedCount} sub="Flagged or inactive" accent="#F87171" />
+        </div>
+      )}
 
       {/* ── Main grid ────────────────────────────────────────────── */}
+      {isLoading ? (
+        <DashboardSkeleton />
+      ) : (
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-5">
 
         {/* Left: tabs + table */}
@@ -516,6 +530,7 @@ function AdminDashboardContent() {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

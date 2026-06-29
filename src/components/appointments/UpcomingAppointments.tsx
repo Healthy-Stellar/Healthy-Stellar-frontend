@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchAppointments, cancelAppointment } from '@/services/api.service';
 import { useWalletStore } from '@/store/useWalletStore';
+import { AppointmentListSkeleton } from '@/components/skeletons';
 
 export default function UpcomingAppointments() {
   const { publicKey } = useWalletStore();
@@ -21,7 +22,7 @@ export default function UpcomingAppointments() {
 
   const upcoming = appointments?.filter((a) => a.status !== 'cancelled' && a.status !== 'completed') ?? [];
 
-  if (isLoading) return <div className="animate-pulse h-24 rounded-xl bg-slate-200" />;
+  if (isLoading) return <AppointmentListSkeleton count={3} />;
 
   if (upcoming.length === 0) return (
     <p className="text-sm text-slate-400 text-center py-4">No upcoming appointments.</p>

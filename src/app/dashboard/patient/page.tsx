@@ -10,6 +10,7 @@ import {
   Calendar, ChevronRight, TrendingUp, TrendingDown,
   Lock, Unlock, Plus, ArrowUpRight, Activity, Loader2
 } from 'lucide-react';
+import { KpiGridSkeleton, PatientListSkeletonGroup, AppointmentListSkeleton } from '@/components/skeletons';
 
 /* ─── Sparkline ─────────────────────────────────────────────────── */
 function Sparkline({ values, color }: { values: number[]; color: string }) {
@@ -153,7 +154,10 @@ export default function PatientDashboard() {
       </div>
 
       {/* ── KPI cards ────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-7">
+      {recordsLoading ? (
+        <KpiGridSkeleton count={4} />
+      ) : (
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-7">
         {kpis.map((k, i) => (
           <div key={i} className="card rounded-[14px] p-5"
                style={{ background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.07)' }}>
@@ -179,7 +183,8 @@ export default function PatientDashboard() {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
 
       {/* ── Main grid ────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-5">
@@ -201,8 +206,8 @@ export default function PatientDashboard() {
           </div>
 
           {recordsLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-5 h-5 animate-spin text-text-3" />
+            <div className="p-4">
+              <PatientListSkeletonGroup count={5} />
             </div>
           ) : (
             <table className="data-table w-full">
