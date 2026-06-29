@@ -5,9 +5,10 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   Activity, LayoutDashboard, FileText, Shield,
   Calendar, Clock, Settings, LogOut,
-  Stethoscope, Users, Bell, ChevronDown,
+  Stethoscope, Users, ChevronDown,
   Hospital, ClipboardList, ShieldCheck,
 } from 'lucide-react';
+import NotificationBell from '@/components/navigation/NotificationBell';
 import { useWalletStore } from '@/store/useWalletStore';
 import { useAuthStore } from '@/store/authStore';
 
@@ -200,9 +201,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
 
           <div className="flex items-center gap-2">
-            <button className="btn-icon rounded-[9px]" aria-label="Notifications">
-              <Bell className="w-4 h-4" />
-            </button>
+            <NotificationBell />
             <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
                  style={{ background: 'rgba(0,200,150,0.15)', color: '#00C896', border: '1px solid rgba(0,200,150,0.2)' }}>
               {initials}
