@@ -81,6 +81,7 @@ const roles = [
 function MockDashboard() {
   return (
     <div className="w-full rounded-xl overflow-hidden text-left shadow-card-lg"
+         aria-hidden="true"
          style={{ background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.08)' }}>
 
       {/* Top bar */}

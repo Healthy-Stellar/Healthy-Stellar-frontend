@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchDoctors } from '@/services/api.service';
 import { Doctor } from '@/types';
+import { Loader2 } from 'lucide-react';
 
 const SPECIALTIES = ['All', 'General', 'Cardiology', 'Dermatology', 'Neurology', 'Pediatrics'];
+const DEBOUNCE_MS = 300;
 
 interface Props {
   onSelect: (doctor: Doctor) => void;
@@ -13,11 +15,50 @@ interface Props {
 
 export default function DoctorSearch({ onSelect }: Props) {
   const [specialty, setSpecialty] = useState('');
+  const [debouncedSpecialty, setDebouncedSpecialty] = useState('');
+  const [showSpinner, setShowSpinner] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout>>();
+  const spinnerTimer = useRef<ReturnType<typeof setTimeout>>();
 
-  const { data: doctors, isLoading } = useQuery({
-    queryKey: ['doctors', specialty],
-    queryFn: () => fetchDoctors(specialty || undefined),
+  const handleSpecialtyChange = useCallback((value: string) => {
+    setSpecialty(value);
+    setShowSpinner(false);
+
+    clearTimeout(debounceTimer.current);
+    clearTimeout(spinnerTimer.current);
+
+    spinnerTimer.current = setTimeout(() => setShowSpinner(true), DEBOUNCE_MS);
+
+    debounceTimer.current = setTimeout(() => {
+      setDebouncedSpecialty(value);
+    }, DEBOUNCE_MS);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(debounceTimer.current);
+      clearTimeout(spinnerTimer.current);
+    };
+  }, []);
+
+  const { data: doctors, isLoading, isFetching } = useQuery({
+    queryKey: ['doctors', debouncedSpecialty],
+    queryFn: ({ signal }) => {
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
+
+      const combinedSignal = signal;
+      controller.signal.addEventListener('abort', () => {
+        // no-op: query cancellation handled by React Query
+      });
+
+      return fetchDoctors(debouncedSpecialty || undefined, combinedSignal);
+    },
   });
+
+  const loading = isLoading || (isFetching && showSpinner);
 
   return (
     <div>
@@ -25,7 +66,7 @@ export default function DoctorSearch({ onSelect }: Props) {
         {SPECIALTIES.map((s) => (
           <button
             key={s}
-            onClick={() => setSpecialty(s === 'All' ? '' : s)}
+            onClick={() => handleSpecialtyChange(s === 'All' ? '' : s)}
             className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${
               (s === 'All' && !specialty) || specialty === s
                 ? 'bg-blue-600 text-white border-blue-600'
@@ -37,19 +78,20 @@ export default function DoctorSearch({ onSelect }: Props) {
         ))}
       </div>
 
-      {isLoading && (
+      {loading && (
         <div className="grid gap-3 sm:grid-cols-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="animate-pulse h-16 rounded-xl bg-slate-200" />
-          ))}
+          <div className="col-span-full flex items-center justify-center py-8 gap-2 text-sm text-slate-400">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Searching doctors…
+          </div>
         </div>
       )}
 
-      {!isLoading && doctors?.length === 0 && (
+      {!loading && doctors?.length === 0 && (
         <p className="text-sm text-slate-400 text-center py-8">No doctors found for this specialty.</p>
       )}
 
-      {!isLoading && doctors && doctors.length > 0 && (
+      {!loading && doctors && doctors.length > 0 && (
         <div className="grid gap-3 sm:grid-cols-2">
           {doctors.map((doc) => (
             <button

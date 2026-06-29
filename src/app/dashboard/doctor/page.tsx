@@ -1,11 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { fetchDoctorPatientsPaginated } from '@/services/api.service';
+import { useWalletStore } from '@/store/useWalletStore';
 import {
   Users, FileText, CheckCircle2, Clock, ChevronRight,
   TrendingUp, PlusCircle, AlertCircle, Activity,
   Eye, Edit3, ArrowUpRight, Send, Search,
-  MoreHorizontal
+  MoreHorizontal, Loader2
 } from 'lucide-react';
 
 /* ─── Sparkline ─────────────────────────────────────────────────── */
@@ -17,7 +20,7 @@ function Sparkline({ values, color }: { values: number[]; color: string }) {
   const step = w / (values.length - 1);
   const pts = values.map((v, i) => `${i * step},${h - ((v - min) / range) * h}`).join(' ');
   return (
-    <svg width={w} height={h} className="overflow-visible">
+    <svg width={w} height={h} className="overflow-visible" aria-hidden="true">
       <polyline points={pts} fill="none" stroke={color} strokeWidth="1.5"
                 strokeLinecap="round" strokeLinejoin="round" opacity="0.8" />
     </svg>
@@ -32,7 +35,7 @@ const kpis = [
   { icon: Clock,        label: 'Pending Actions',  value: '4',  trend: 'down', change: '−2', sub: '2 urgent',      spark: [8,7,6,6,5,5,5,4] },
 ];
 
-const patients = [
+const fallbackPatients = [
   { name: 'John Doe',    initials: 'JD', age: 34, lastVisit: 'Jun 3, 2025',  status: 'active',   records: 24, addr: 'GAKP...X7QM' },
   { name: 'Jane Smith',  initials: 'JS', age: 28, lastVisit: 'May 30, 2025', status: 'active',   records: 11, addr: 'GCMR...4BNP' },
   { name: 'Robert Chen', initials: 'RC', age: 52, lastVisit: 'May 22, 2025', status: 'inactive', records: 37, addr: 'GPX2...9KLF' },
@@ -64,6 +67,28 @@ const typeColor: Record<string,string> = {
 };
 
 export default function DoctorDashboard() {
+  const { publicKey } = useWalletStore();
+
+  const {
+    data: patientsData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: patientsLoading,
+  } = useInfiniteQuery({
+    queryKey: ['doctor-patients-paginated', publicKey],
+    queryFn: ({ pageParam }) => fetchDoctorPatientsPaginated(publicKey!, pageParam),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    enabled: !!publicKey,
+  });
+
+  const patients = patientsData
+    ? patientsData.pages.flatMap((p) => p.data)
+    : fallbackPatients;
+
+  const totalPatients = patientsData?.pages[0]?.total ?? patients.length;
+
   return (
     <div>
       {/* ── Page header ─────────────────────────────────────────── */}
@@ -145,7 +170,7 @@ export default function DoctorDashboard() {
                style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
             <div>
               <h2 className="text-sm font-semibold text-text-1">My Patients</h2>
-              <p className="text-xs text-text-3 mt-0.5">18 active · 5 shown</p>
+              <p className="text-xs text-text-3 mt-0.5">{totalPatients} total · {patients.length} loaded</p>
             </div>
             <div className="flex items-center gap-2">
               <div className="relative">
@@ -155,52 +180,75 @@ export default function DoctorDashboard() {
             </div>
           </div>
 
-          <table className="data-table w-full">
-            <thead>
-              <tr>
-                <th>Patient</th>
-                <th className="hidden sm:table-cell">Age</th>
-                <th className="hidden md:table-cell">Records</th>
-                <th>Last Visit</th>
-                <th>Status</th>
-                <th className="text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {patients.map((p, i) => (
-                <tr key={i}>
-                  <td>
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-full flex items-center justify-center text-2xs font-bold shrink-0"
-                           style={{ background: 'rgba(0,200,150,0.12)', color: '#00C896', border: '1px solid rgba(0,200,150,0.15)' }}>
-                        {p.initials}
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium text-text-1">{p.name}</p>
-                        <p className="text-2xs font-mono text-text-3 hidden sm:block">{p.addr}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="hidden sm:table-cell text-xs text-text-2">{p.age}</td>
-                  <td className="hidden md:table-cell text-xs text-text-2">{p.records}</td>
-                  <td className="text-xs text-text-2 whitespace-nowrap">{p.lastVisit}</td>
-                  <td>
-                    {p.status === 'active'
-                      ? <span className="badge-green">active</span>
-                      : <span className="badge-muted">inactive</span>
-                    }
-                  </td>
-                  <td>
-                    <div className="flex items-center gap-1 justify-end">
-                      <button className="btn-icon w-7 h-7 rounded-md"><Eye className="w-3.5 h-3.5" /></button>
-                      <button className="btn-icon w-7 h-7 rounded-md"><Edit3 className="w-3.5 h-3.5" /></button>
-                      <button className="btn-icon w-7 h-7 rounded-md"><MoreHorizontal className="w-3.5 h-3.5" /></button>
-                    </div>
-                  </td>
+          {patientsLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-5 h-5 animate-spin text-text-3" />
+            </div>
+          ) : (
+            <table className="data-table w-full">
+              <thead>
+                <tr>
+                  <th>Patient</th>
+                  <th className="hidden sm:table-cell">Age</th>
+                  <th className="hidden md:table-cell">Records</th>
+                  <th>Last Visit</th>
+                  <th>Status</th>
+                  <th className="text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {patients.map((p, i) => (
+                  <tr key={i}>
+                    <td>
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-2xs font-bold shrink-0"
+                             style={{ background: 'rgba(0,200,150,0.12)', color: '#00C896', border: '1px solid rgba(0,200,150,0.15)' }}>
+                          {p.initials}
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-text-1">{p.name}</p>
+                          <p className="text-2xs font-mono text-text-3 hidden sm:block">{p.addr}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="hidden sm:table-cell text-xs text-text-2">{p.age}</td>
+                    <td className="hidden md:table-cell text-xs text-text-2">{p.records}</td>
+                    <td className="text-xs text-text-2 whitespace-nowrap">{p.lastVisit}</td>
+                    <td>
+                      {p.status === 'active'
+                        ? <span className="badge-green">active</span>
+                        : <span className="badge-muted">inactive</span>
+                      }
+                    </td>
+                    <td>
+                      <div className="flex items-center gap-1 justify-end">
+                        <button className="btn-icon w-7 h-7 rounded-md" aria-label="View patient"><Eye className="w-3.5 h-3.5" /></button>
+                        <button className="btn-icon w-7 h-7 rounded-md" aria-label="Edit patient"><Edit3 className="w-3.5 h-3.5" /></button>
+                        <button className="btn-icon w-7 h-7 rounded-md" aria-label="More options"><MoreHorizontal className="w-3.5 h-3.5" /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+
+          {hasNextPage && (
+            <div className="px-5 py-3 flex justify-center" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <button
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+                className="flex items-center gap-2 text-xs font-medium transition-colors hover:text-text-1 disabled:opacity-50"
+                style={{ color: '#00C896' }}
+              >
+                {isFetchingNextPage ? (
+                  <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Loading…</>
+                ) : (
+                  'Load more patients'
+                )}
+              </button>
+            </div>
+          )}
 
           <div className="px-5 py-3" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             <Link href="/dashboard/doctor/patients"
@@ -310,7 +358,7 @@ export default function DoctorDashboard() {
               </div>
               <div className="flex items-center gap-4 shrink-0 ml-4">
                 <span className="text-xs text-text-3">{ev.time}</span>
-                <button className="btn-icon w-6 h-6 rounded-md">
+                <button className="btn-icon w-6 h-6 rounded-md" aria-label="View on-chain transaction">
                   <ArrowUpRight className="w-3 h-3" />
                 </button>
               </div>

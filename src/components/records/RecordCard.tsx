@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { MedicalRecord } from '@/types';
 import { shareRecord } from '@/services/api.service';
 import RecordDetailDrawer from './RecordDetailDrawer';
+import { useToast } from '@/hooks/useToast';
 
 interface Props {
   record: MedicalRecord;
 }
 
 export default function RecordCard({ record }: Props) {
+  const { toast } = useToast();
   const [showDrawer, setShowDrawer] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [shareInfo, setShareInfo] = useState<{ token: string; expiresAt: string } | null>(null);
@@ -22,7 +24,7 @@ export default function RecordCard({ record }: Props) {
       const result = await shareRecord(record.id, provider);
       setShareInfo({ token: result.token, expiresAt: result.expiresAt });
     } catch {
-      alert('Failed to generate share token.');
+      toast('Failed to generate share token.', 'error');
     } finally {
       setSharing(false);
     }

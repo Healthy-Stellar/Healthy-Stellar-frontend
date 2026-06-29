@@ -1,11 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { fetchRecordsPaginated } from '@/services/api.service';
+import { useWalletStore } from '@/store/useWalletStore';
 import {
   FileText, Shield, Clock, CheckCircle2,
   AlertCircle, Eye, Download, Stethoscope,
   Calendar, ChevronRight, TrendingUp, TrendingDown,
-  Lock, Unlock, Plus, ArrowUpRight, Activity
+  Lock, Unlock, Plus, ArrowUpRight, Activity, Loader2
 } from 'lucide-react';
 
 /* ─── Sparkline ─────────────────────────────────────────────────── */
@@ -20,7 +23,7 @@ function Sparkline({ values, color }: { values: number[]; color: string }) {
     .map((v, i) => `${i * step},${h - ((v - min) / range) * h}`)
     .join(' ');
   return (
-    <svg width={w} height={h} className="overflow-visible">
+    <svg width={w} height={h} className="overflow-visible" aria-hidden="true">
       <polyline points={points} fill="none" stroke={color} strokeWidth="1.5"
                 strokeLinecap="round" strokeLinejoin="round" opacity="0.8" />
     </svg>
@@ -32,7 +35,7 @@ function RingChart({ pct, size = 44 }: { pct: number; size?: number }) {
   const r = (size - 6) / 2;
   const circ = 2 * Math.PI * r;
   return (
-    <svg width={size} height={size} className="-rotate-90">
+    <svg width={size} height={size} className="-rotate-90" aria-hidden="true">
       <circle cx={size / 2} cy={size / 2} r={r} fill="none"
               stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
       <circle cx={size / 2} cy={size / 2} r={r} fill="none"
@@ -66,7 +69,7 @@ const kpis = [
   },
 ];
 
-const records = [
+const fallbackRecords = [
   { id: 'HS-001337', type: 'Blood Test Results',  doctor: 'Dr. Sarah Smith',  date: 'Jun 3, 2025',  status: 'verified' },
   { id: 'HS-001290', type: 'MRI Scan Report',      doctor: 'Dr. James Wilson', date: 'May 28, 2025', status: 'verified' },
   { id: 'HS-001201', type: 'Prescription',          doctor: 'Dr. Sarah Smith',  date: 'May 15, 2025', status: 'pending'  },
@@ -97,6 +100,34 @@ const typeColor: Record<string, string> = {
 };
 
 export default function PatientDashboard() {
+  const { publicKey } = useWalletStore();
+
+  const {
+    data: recordsData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: recordsLoading,
+  } = useInfiniteQuery({
+    queryKey: ['patient-records-paginated', publicKey],
+    queryFn: ({ pageParam }) => fetchRecordsPaginated(publicKey!, pageParam),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    enabled: !!publicKey,
+  });
+
+  const records = recordsData
+    ? recordsData.pages.flatMap((p) => p.data).map((r) => ({
+        id: r.id,
+        type: r.diagnosis,
+        doctor: r.doctorName,
+        date: new Date(r.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        status: 'verified' as const,
+      }))
+    : fallbackRecords;
+
+  const totalRecords = recordsData?.pages[0]?.total ?? records.length;
+
   return (
     <div>
       {/* ── Page header ─────────────────────────────────────────── */}
@@ -160,7 +191,7 @@ export default function PatientDashboard() {
                style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
             <div>
               <h2 className="text-sm font-semibold text-text-1">Medical Records</h2>
-              <p className="text-xs text-text-3 mt-0.5">{records.length} records · 4 verified</p>
+              <p className="text-xs text-text-3 mt-0.5">{totalRecords} records total · {records.length} loaded</p>
             </div>
             <Link href="/dashboard/patient/records"
                   className="flex items-center gap-1 text-xs font-medium transition-colors hover:text-text-1"
@@ -169,52 +200,75 @@ export default function PatientDashboard() {
             </Link>
           </div>
 
-          <table className="data-table w-full">
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th className="hidden sm:table-cell">Doctor</th>
-                <th className="hidden md:table-cell">ID</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th className="text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {records.map(r => (
-                <tr key={r.id}>
-                  <td>
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                           style={{ background: 'var(--bg-inset)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                        <FileText className="w-3.5 h-3.5 text-text-3" />
-                      </div>
-                      <span className="text-xs font-medium text-text-1 truncate max-w-[120px]">{r.type}</span>
-                    </div>
-                  </td>
-                  <td className="hidden sm:table-cell text-xs text-text-2">{r.doctor}</td>
-                  <td className="hidden md:table-cell text-2xs font-mono text-text-3">{r.id}</td>
-                  <td className="text-xs text-text-2 whitespace-nowrap">{r.date}</td>
-                  <td>
-                    {r.status === 'verified'
-                      ? <span className="badge-green"><CheckCircle2 className="w-2.5 h-2.5" />verified</span>
-                      : <span className="badge-yellow"><AlertCircle className="w-2.5 h-2.5" />pending</span>
-                    }
-                  </td>
-                  <td>
-                    <div className="flex items-center gap-1 justify-end">
-                      <button className="btn-icon rounded-md w-7 h-7">
-                        <Eye className="w-3.5 h-3.5" />
-                      </button>
-                      <button className="btn-icon rounded-md w-7 h-7">
-                        <Download className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
+          {recordsLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-5 h-5 animate-spin text-text-3" />
+            </div>
+          ) : (
+            <table className="data-table w-full">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th className="hidden sm:table-cell">Doctor</th>
+                  <th className="hidden md:table-cell">ID</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th className="text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {records.map(r => (
+                  <tr key={r.id}>
+                    <td>
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                             style={{ background: 'var(--bg-inset)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                          <FileText className="w-3.5 h-3.5 text-text-3" />
+                        </div>
+                        <span className="text-xs font-medium text-text-1 truncate max-w-[120px]">{r.type}</span>
+                      </div>
+                    </td>
+                    <td className="hidden sm:table-cell text-xs text-text-2">{r.doctor}</td>
+                    <td className="hidden md:table-cell text-2xs font-mono text-text-3">{r.id}</td>
+                    <td className="text-xs text-text-2 whitespace-nowrap">{r.date}</td>
+                    <td>
+                      {r.status === 'verified'
+                        ? <span className="badge-green"><CheckCircle2 className="w-2.5 h-2.5" />verified</span>
+                        : <span className="badge-yellow"><AlertCircle className="w-2.5 h-2.5" />pending</span>
+                      }
+                    </td>
+                    <td>
+                      <div className="flex items-center gap-1 justify-end">
+                        <button className="btn-icon rounded-md w-7 h-7" aria-label="View record">
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        <button className="btn-icon rounded-md w-7 h-7" aria-label="Download record">
+                          <Download className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+
+          {hasNextPage && (
+            <div className="px-5 py-3 flex justify-center" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <button
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+                className="flex items-center gap-2 text-xs font-medium transition-colors hover:text-text-1 disabled:opacity-50"
+                style={{ color: '#00C896' }}
+              >
+                {isFetchingNextPage ? (
+                  <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Loading…</>
+                ) : (
+                  'Load more records'
+                )}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Right column */}
@@ -239,6 +293,7 @@ export default function PatientDashboard() {
                     <p className="text-2xs text-text-3 truncate">Expires {g.expiry}</p>
                   </div>
                   <button className="btn-icon w-7 h-7 rounded-lg"
+                          aria-label={g.active ? 'Revoke access' : 'Grant access'}
                           style={g.active ? { color: '#00C896' } : {}}>
                     {g.active ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
                   </button>
@@ -252,7 +307,7 @@ export default function PatientDashboard() {
                style={{ background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.07)' }}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold text-text-1">Upcoming</h2>
-              <button className="btn-icon w-6 h-6 rounded-md">
+              <button className="btn-icon w-6 h-6 rounded-md" aria-label="Add appointment">
                 <Plus className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -312,7 +367,7 @@ export default function PatientDashboard() {
               <div className="flex items-center gap-4 shrink-0 ml-4">
                 <span className="text-xs font-mono text-text-3 hidden sm:block">{ev.hash}</span>
                 <span className="text-xs text-text-3">{ev.time}</span>
-                <button className="btn-icon w-6 h-6 rounded-md">
+                <button className="btn-icon w-6 h-6 rounded-md" aria-label="View on-chain transaction">
                   <ArrowUpRight className="w-3 h-3" />
                 </button>
               </div>

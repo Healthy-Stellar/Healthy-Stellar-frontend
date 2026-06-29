@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -56,6 +56,12 @@ export default function LoginPage() {
   const [connecting, setConnecting] = useState<string | null>(null);
   const [connectError, setConnectError] = useState<string | null>(null);
   const [lastWallet, setLastWallet] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (publicKey && walletRole) {
+      router.replace(ROLE_DASHBOARD_MAP[walletRole] ?? '/dashboard/patient');
+    }
+  }, [publicKey, walletRole, router]);
 
   function handleRoleSelect(role: Role) {
     setSelectedRole(role);

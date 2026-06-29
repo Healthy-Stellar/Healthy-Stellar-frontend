@@ -76,3 +76,44 @@ export interface UploadEncryptedRecordPayload {
   iv: Uint8Array;
   exportedKey: ArrayBuffer;
 }
+
+export interface StaffMember {
+  id: string;
+  name: string;
+  role: 'DOCTOR' | 'NURSE' | 'ADMIN';
+  specialty?: string;
+  department: string;
+  address: string;
+  status: 'active' | 'inactive' | 'pending';
+  joinDate: string;
+}
+
+export interface PatientAdmission {
+  id: string;
+  patientName: string;
+  patientAddress: string;
+  admissionDate: string;
+  dischargeDate?: string;
+  department: string;
+  status: 'admitted' | 'discharged' | 'pending';
+  assignedDoctor: string;
+}
+
+export interface HospitalMetrics {
+  totalPatients: number;
+  activeAdmissions: number;
+  totalAppointments: number;
+  monthlyRevenue: number;
+  complianceScore: number;
+  staffCount: number;
+}
+
+export interface ComplianceReport {
+  id: string;
+  title: string;
+  type: 'HIPAA' | 'DATA_PRIVACY' | 'LICENSING' | 'SAFETY';
+  status: 'compliant' | 'review_needed' | 'non_compliant';
+  lastAudit: string;
+  nextAudit: string;
+  score: number;
+}
