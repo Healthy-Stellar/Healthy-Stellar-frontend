@@ -6,10 +6,9 @@ import { useRouter } from 'next/navigation';
 import {
   Activity, User, Stethoscope, Hospital,
   ChevronRight, ShieldCheck, ArrowLeft, Loader2,
-  CheckCircle2, Wallet
+  CheckCircle2, Wallet, AlertCircle
 } from 'lucide-react';
-import { useWalletStore } from '@/store/useWalletStore';
-import { ROLE_DASHBOARD_MAP } from '@/hooks/useRoleRedirect';
+import { useToast } from '@/hooks/useToast';
 
 type Role = 'PATIENT' | 'DOCTOR' | 'HOSPITAL';
 
@@ -51,10 +50,12 @@ const trustPoints = [
 
 export default function LoginPage() {
   const router = useRouter();
-  const { publicKey, role: walletRole } = useWalletStore();
+  const { toast } = useToast();
   const [step, setStep] = useState<'role' | 'wallet'>('role');
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [connecting, setConnecting] = useState<string | null>(null);
+  const [connectError, setConnectError] = useState<string | null>(null);
+  const [lastWallet, setLastWallet] = useState<string | null>(null);
 
   useEffect(() => {
     if (publicKey && walletRole) {
@@ -69,8 +70,20 @@ export default function LoginPage() {
 
   async function handleWalletConnect(walletId: string) {
     setConnecting(walletId);
-    await new Promise(r => setTimeout(r, 1800));
-    router.push(selectedRole === 'DOCTOR' ? '/dashboard/doctor' : '/dashboard/patient');
+    setConnectError(null);
+    setLastWallet(walletId);
+    try {
+      await new Promise(r => setTimeout(r, 1800));
+      router.push(selectedRole === 'DOCTOR' ? '/dashboard/doctor' : '/dashboard/patient');
+    } catch (err) {
+      const message = err instanceof Error && err.message
+        ? err.message
+        : 'Wallet connection rejected. Please try again.';
+      toast(message, 'error');
+      setConnectError(message);
+    } finally {
+      setConnecting(null);
+    }
   }
 
   return (
@@ -234,6 +247,23 @@ export default function LoginPage() {
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Back
               </button>
+
+              {connectError && (
+                <div className="flex items-center justify-between rounded-[10px] p-3 mb-4"
+                     style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)' }}>
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-400" />
+                    <p className="text-xs text-red-400">{connectError}</p>
+                  </div>
+                  <button
+                    onClick={() => lastWallet && handleWalletConnect(lastWallet)}
+                    className="text-xs font-semibold ml-3 shrink-0 transition-colors hover:opacity-80"
+                    style={{ color: '#00C896' }}
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
 
               <div className="space-y-2.5 mb-5">
                 {wallets.map(wallet => (
