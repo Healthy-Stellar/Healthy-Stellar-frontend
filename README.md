@@ -49,7 +49,7 @@ To get a local copy up and running, follow these steps:
 
 Clone the repository:
 
-git clone https://github.com/your-username/Healthy-Stellar-frontend.gitt
+git clone https://github.com/your-username/Healthy-Stellar-frontend.git
 
 Navigate to the project directory:
 
