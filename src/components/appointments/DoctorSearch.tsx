@@ -68,8 +68,8 @@ export default function DoctorSearch({ onSelect }: Props) {
             onClick={() => handleSpecialtyChange(s === 'All' ? '' : s)}
             className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${
               (s === 'All' && !specialty) || specialty === s
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                ? 'bg-green text-[#030D09] border-green'
+                : 'border-border text-text-2 hover:bg-surface-hover'
             }`}
           >
             {s}
@@ -96,10 +96,10 @@ export default function DoctorSearch({ onSelect }: Props) {
             <button
               key={doc.id}
               onClick={() => onSelect(doc)}
-              className="text-left rounded-xl border border-slate-200 bg-white p-4 hover:border-blue-400 hover:shadow-sm transition-all"
+              className="text-left rounded-xl border border-border bg-surface-card p-4 hover:border-green hover:shadow-card transition-all"
             >
-              <p className="font-semibold text-slate-900">{doc.name}</p>
-              <p className="text-xs text-slate-500">{doc.specialty}</p>
+              <p className="font-semibold text-text-1">{doc.name}</p>
+              <p className="text-xs text-text-2">{doc.specialty}</p>
             </button>
           ))}
         </div>
