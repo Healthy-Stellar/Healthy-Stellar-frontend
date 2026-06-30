@@ -25,8 +25,8 @@ export default function RoleNotRegisteredPage() {
         </svg>
       </div>
 
-      <h1 className="text-3xl font-bold text-slate-900">Role Not Registered</h1>
-      <p className="mt-4 text-base text-slate-600 max-w-md">
+      <h1 className="text-3xl font-bold text-text-1">Role Not Registered</h1>
+      <p className="mt-4 text-base text-text-2 max-w-md">
         Your wallet is connected, but no role has been assigned to it on the
         Healthy-Stellar platform. Please contact the platform administrator to
         have your role assigned.
@@ -36,13 +36,13 @@ export default function RoleNotRegisteredPage() {
         <Link
           href="/"
           onClick={clearAuth}
-          className="rounded-md bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="rounded-md bg-green px-4 py-2.5 text-sm font-semibold text-[#030D09] shadow-sm hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green"
         >
           Disconnect &amp; Go Home
         </Link>
         <a
           href="mailto:support@healthy-stellar.io"
-          className="text-sm font-semibold text-slate-700 hover:text-slate-900"
+          className="text-sm font-semibold text-text-2 hover:text-text-1"
         >
           Contact Support
         </a>

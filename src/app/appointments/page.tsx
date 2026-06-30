@@ -10,6 +10,7 @@ import UpcomingAppointments from '@/components/appointments/UpcomingAppointments
 import { createAppointment } from '@/services/api.service';
 import { useWalletStore } from '@/store/useWalletStore';
 import { STELLAR_CONFIG } from '@/lib/stellar';
+import { withVideoRoom } from '@/lib/video';
 import { Doctor, TimeSlot, Appointment } from '@/types';
 import { TransactionBuilder, Networks, Operation, Asset } from '@stellar/stellar-sdk';
 
@@ -68,7 +69,7 @@ function BookingFlow() {
       });
     },
     onSuccess: (appt) => {
-      setConfirmed(appt);
+      setConfirmed(withVideoRoom(appt));
       setStep('confirmed');
     },
   });
@@ -87,7 +88,7 @@ function BookingFlow() {
       {/* Step indicator */}
       <div className="flex items-center gap-2 text-xs text-slate-400">
         {(['search', 'slots', 'form'] as Step[]).map((s, i) => (
-          <span key={s} className={`flex items-center gap-1 ${step === s ? 'text-blue-600 font-medium' : ''}`}>
+          <span key={s} className={`flex items-center gap-1 ${step === s ? 'text-green font-medium' : ''}`}>
             {i > 0 && <span>›</span>}
             {s === 'search' ? 'Find Doctor' : s === 'slots' ? 'Pick Slot' : 'Book & Pay'}
           </span>
@@ -106,7 +107,7 @@ function BookingFlow() {
           {slot && (
             <button
               onClick={() => setStep('form')}
-              className="mt-4 w-full rounded-md bg-blue-600 py-2 text-sm font-semibold text-white hover:bg-blue-500"
+              className="mt-4 w-full rounded-md bg-green py-2 text-sm font-semibold text-[#030D09] hover:bg-green-600"
             >
               Continue
             </button>
@@ -142,7 +143,7 @@ function BookingFlow() {
                 rows={2}
                 value={form.notes}
                 onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                className="w-full rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-md border border-border bg-surface-inset px-3 py-2 text-sm text-text-1 focus:outline-none focus:ring-2 focus:ring-border-focus"
               />
             </div>
 
@@ -178,7 +179,7 @@ function BookingFlow() {
             <button
               onClick={() => bookMutation.mutate()}
               disabled={bookMutation.isPending}
-              className="w-full rounded-md bg-blue-600 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
+              className="w-full rounded-md bg-green py-2 text-sm font-semibold text-[#030D09] hover:bg-green-600 disabled:opacity-50"
             >
               {bookMutation.isPending ? 'Processing…' : 'Confirm & Pay'}
             </button>
@@ -194,11 +195,11 @@ export default function AppointmentsPage() {
     <ProtectedRoute requiredRole="PATIENT">
       <div className="mx-auto max-w-3xl px-4 py-8 space-y-10">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-6">Book an Appointment</h1>
+          <h1 className="text-2xl font-bold text-text-1 mb-6">Book an Appointment</h1>
           <BookingFlow />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Upcoming Appointments</h2>
+          <h2 className="text-lg font-semibold text-text-1 mb-4">Upcoming Appointments</h2>
           <UpcomingAppointments />
         </div>
       </div>

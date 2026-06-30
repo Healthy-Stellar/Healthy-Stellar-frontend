@@ -39,25 +39,25 @@ export default function BookingConfirmation({ appointment, onDone }: Props) {
   return (
     <div className="flex flex-col items-center text-center py-12 px-4">
       <div className="text-5xl mb-4">✅</div>
-      <h2 className="text-xl font-bold text-slate-900 mb-2">Booking Confirmed!</h2>
-      <p className="text-sm text-slate-500 mb-1">
+      <h2 className="text-xl font-bold text-text-1 mb-2">Booking Confirmed!</h2>
+      <p className="text-sm text-text-2 mb-1">
         Appointment with <span className="font-medium">Dr. {appointment.doctorName}</span>
       </p>
-      <p className="text-sm text-slate-500 mb-1">
+      <p className="text-sm text-text-2 mb-1">
         {new Date(appointment.datetime).toLocaleString()} · {appointment.type}
       </p>
-      <p className="text-xs text-slate-400 mb-6">Ref: {appointment.id}</p>
+      <p className="text-xs text-text-3 mb-6">Ref: {appointment.id}</p>
 
       <div className="flex gap-3">
         <button
           onClick={downloadICS}
-          className="rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          className="rounded-md border border-border px-4 py-2 text-sm font-medium text-text-1 hover:bg-surface-hover"
         >
           📅 Add to Calendar
         </button>
         <button
           onClick={onDone}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500"
+          className="rounded-md bg-green px-4 py-2 text-sm font-semibold text-[#030D09] hover:bg-green-600"
         >
           Done
         </button>

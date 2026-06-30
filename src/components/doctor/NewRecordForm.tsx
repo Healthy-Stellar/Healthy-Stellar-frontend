@@ -66,29 +66,29 @@ export default function NewRecordForm({ patientAddress, onSuccess }: Props) {
       className="space-y-3"
     >
       <div>
-        <label className="block text-xs font-medium text-slate-600 mb-1">Diagnosis *</label>
+        <label className="block text-xs font-medium text-text-2 mb-1">Diagnosis *</label>
         <input
           required
           value={form.diagnosis}
           onChange={(e) => setForm((f) => ({ ...f, diagnosis: e.target.value }))}
-          className="w-full rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-md border border-border px-3 py-2 text-sm bg-surface-inset text-text-1 focus:outline-none focus:ring-2 focus:ring-border-focus"
         />
       </div>
       <div>
-        <label className="block text-xs font-medium text-slate-600 mb-1">Prescription</label>
+        <label className="block text-xs font-medium text-text-2 mb-1">Prescription</label>
         <input
           value={form.prescription}
           onChange={(e) => setForm((f) => ({ ...f, prescription: e.target.value }))}
-          className="w-full rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-md border border-border px-3 py-2 text-sm bg-surface-inset text-text-1 focus:outline-none focus:ring-2 focus:ring-border-focus"
         />
       </div>
       <div>
-        <label className="block text-xs font-medium text-slate-600 mb-1">Notes</label>
+        <label className="block text-xs font-medium text-text-2 mb-1">Notes</label>
         <textarea
           rows={3}
           value={form.notes}
           onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-          className="w-full rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-md border border-border px-3 py-2 text-sm bg-surface-inset text-text-1 focus:outline-none focus:ring-2 focus:ring-border-focus"
         />
       </div>
 
@@ -99,7 +99,7 @@ export default function NewRecordForm({ patientAddress, onSuccess }: Props) {
       <button
         type="submit"
         disabled={mutation.isPending}
-        className="w-full rounded-md bg-blue-600 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
+        className="w-full rounded-md bg-green py-2 text-sm font-semibold text-[#030D09] hover:bg-green-600 disabled:opacity-50"
       >
         {mutation.isPending ? 'Submitting…' : 'Submit Record'}
       </button>
