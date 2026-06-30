@@ -15,8 +15,8 @@ interface Props {
 
 const STATUS_COLORS: Record<Appointment['status'], string> = {
   pending: 'bg-yellow-100 text-yellow-700',
-  confirmed: 'bg-blue-100 text-blue-700',
-  completed: 'bg-green-100 text-green-700',
+  confirmed: 'bg-green-100 text-green-700',
+  completed: 'bg-green-200 text-green-800',
   cancelled: 'bg-red-100 text-red-700',
 };
 
@@ -38,14 +38,14 @@ export default function AppointmentCard({ appointment }: Props) {
   });
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div className="rounded-xl border border-border bg-surface-card shadow-card">
       <div
         className="flex items-center justify-between p-4 cursor-pointer"
         onClick={() => setExpanded((v) => !v)}
       >
         <div>
-          <p className="font-semibold text-slate-900">{appointment.patientName ?? appointment.patientAddress.slice(0, 8) + '…'}</p>
-          <p className="text-xs text-slate-500">
+          <p className="font-semibold text-text-1">{appointment.patientName ?? appointment.patientAddress.slice(0, 8) + '…'}</p>
+          <p className="text-xs text-text-2">
             {new Date(appointment.datetime).toLocaleString()} · {appointment.type}
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function AppointmentCard({ appointment }: Props) {
       </div>
 
       {expanded && (
-        <div className="border-t border-slate-100 p-4 space-y-4">
+        <div className="border-t border-border p-4 space-y-4">
           {/* Status actions */}
           {appointment.status !== 'completed' && appointment.status !== 'cancelled' && (
             <div className="flex gap-2">
@@ -63,7 +63,7 @@ export default function AppointmentCard({ appointment }: Props) {
                 <button
                   onClick={() => statusMutation.mutate('confirmed')}
                   disabled={statusMutation.isPending}
-                  className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-500 disabled:opacity-50"
+                  className="rounded-md bg-green px-3 py-1.5 text-xs font-medium text-[#030D09] hover:bg-green-600 disabled:opacity-50"
                 >
                   Confirm
                 </button>
@@ -89,16 +89,16 @@ export default function AppointmentCard({ appointment }: Props) {
 
           {/* Patient medical history */}
           <div>
-            <p className="text-xs font-medium text-slate-500 mb-2">Patient History</p>
-            {!patientRecords && <p className="text-xs text-slate-400">Loading…</p>}
-            {patientRecords?.length === 0 && <p className="text-xs text-slate-400">No records found.</p>}
+            <p className="text-xs font-medium text-text-2 mb-2">Patient History</p>
+            {!patientRecords && <p className="text-xs text-text-3">Loading…</p>}
+            {patientRecords?.length === 0 && <p className="text-xs text-text-3">No records found.</p>}
             {patientRecords && patientRecords.length > 0 && (
               <ul className="space-y-1">
                 {patientRecords.map((r) => (
                   <li key={r.id}>
                     <button
                       onClick={() => setSelectedRecord(r)}
-                      className="text-xs text-blue-600 hover:underline"
+                      className="text-xs text-green hover:underline"
                     >
                       {new Date(r.date).toLocaleDateString()} — {r.diagnosis}
                     </button>
@@ -112,7 +112,7 @@ export default function AppointmentCard({ appointment }: Props) {
           <div>
             <button
               onClick={() => setShowRecordForm((v) => !v)}
-              className="text-xs font-medium text-blue-600 hover:underline"
+              className="text-xs font-medium text-green hover:underline"
             >
               {showRecordForm ? 'Hide form' : '+ Add Medical Record'}
             </button>

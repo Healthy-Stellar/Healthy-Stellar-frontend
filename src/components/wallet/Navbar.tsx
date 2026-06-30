@@ -19,7 +19,7 @@ export default function Navbar() {
     <>
       <nav className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/80 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-          <Link href="/" className="font-bold text-blue-600 text-lg">HealthyStella</Link>
+          <Link href="/" className="font-bold text-green text-lg">HealthyStella</Link>
 
           <div className="flex items-center gap-3">
             {publicKey ? (
@@ -40,7 +40,7 @@ export default function Navbar() {
             ) : (
               <button
                 onClick={() => setShowModal(true)}
-                className="rounded-md bg-blue-600 px-3.5 py-1.5 text-sm font-semibold text-white hover:bg-blue-500"
+                className="rounded-md bg-green px-3.5 py-1.5 text-sm font-semibold text-[#030D09] hover:bg-green-600"
               >
                 Connect Wallet
               </button>

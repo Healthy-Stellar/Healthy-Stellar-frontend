@@ -73,13 +73,13 @@ export default function MedicalRecordUpload({ patientAddress, onUploaded }: Prop
   const busy = mutation.isPending;
 
   return (
-    <div className="rounded-xl border-2 border-dashed border-slate-200 bg-white p-6 text-center">
+    <div className="rounded-xl border-2 border-dashed border-border bg-surface-card p-6 text-center">
       <p className="text-3xl mb-2">🔒</p>
-      <p className="font-medium text-slate-700">Upload Encrypted Medical Record</p>
-      <p className="text-xs text-slate-400 mt-1">PDF, JPEG or PNG · max 10 MB · encrypted before upload</p>
+      <p className="font-medium text-text-1">Upload Encrypted Medical Record</p>
+      <p className="text-xs text-text-3 mt-1">PDF, JPEG or PNG · max 10 MB · encrypted before upload</p>
 
       {progress !== 'idle' && (
-        <p className="mt-3 text-sm text-blue-600 animate-pulse">
+        <p className="mt-3 text-sm text-green animate-pulse">
           {progress === 'encrypting' ? 'Encrypting file…' : 'Uploading…'}
         </p>
       )}
@@ -87,7 +87,7 @@ export default function MedicalRecordUpload({ patientAddress, onUploaded }: Prop
       <button
         onClick={() => inputRef.current?.click()}
         disabled={busy}
-        className="mt-4 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50"
+        className="mt-4 rounded-md bg-green px-4 py-2 text-sm font-medium text-[#030D09] hover:bg-green-600 disabled:opacity-50"
       >
         {busy ? 'Processing…' : 'Choose File'}
       </button>

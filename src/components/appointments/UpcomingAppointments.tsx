@@ -21,23 +21,23 @@ export default function UpcomingAppointments() {
 
   const upcoming = appointments?.filter((a) => a.status !== 'cancelled' && a.status !== 'completed') ?? [];
 
-  if (isLoading) return <div className="animate-pulse h-24 rounded-xl bg-slate-200" />;
+  if (isLoading) return <div className="animate-pulse h-24 rounded-xl bg-surface-card" />;
 
   if (upcoming.length === 0) return (
-    <p className="text-sm text-slate-400 text-center py-4">No upcoming appointments.</p>
+    <p className="text-sm text-text-3 text-center py-4">No upcoming appointments.</p>
   );
 
   return (
     <div className="space-y-3">
       {upcoming.map((appt) => (
-        <div key={appt.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4">
+        <div key={appt.id} className="flex items-center justify-between rounded-xl border border-border bg-surface-card p-4">
           <div>
-            <p className="font-medium text-slate-900">Dr. {appt.doctorName}</p>
-            <p className="text-xs text-slate-500">
+            <p className="font-medium text-text-1">Dr. {appt.doctorName}</p>
+            <p className="text-xs text-text-2">
               {new Date(appt.datetime).toLocaleString()} · {appt.type}
             </p>
             <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-              appt.status === 'confirmed' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'
+              appt.status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
             }`}>
               {appt.status}
             </span>
