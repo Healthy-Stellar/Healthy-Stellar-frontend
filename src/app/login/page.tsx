@@ -224,7 +224,7 @@ export default function LoginPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm font-semibold text-text-1">{role.label}</span>
-                      <ChevronRight className="w-4 h-4 text-text-3 group-hover:text-green-500 transition-colors" />
+                      <ChevronRight className="w-4 h-4 text-text-3 group-hover:text-[--green] transition-colors" />
                     </div>
                     <p className="text-xs text-text-2 mb-2.5 leading-relaxed">{role.description}</p>
                     <div className="flex flex-wrap gap-1.5">
@@ -287,7 +287,7 @@ export default function LoginPage() {
                     <div className="flex items-center gap-3.5">
                       <div className="w-10 h-10 rounded-[10px] flex items-center justify-center shrink-0"
                            style={{ background: 'var(--bg-inset)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                        <Wallet className="w-4.5 h-4.5 text-text-2 group-hover:text-green-500 transition-colors" style={{ width: '18px', height: '18px' }} />
+                        <Wallet className="w-4.5 h-4.5 text-text-2 group-hover:text-[--green] transition-colors" style={{ width: '18px', height: '18px' }} />
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-text-1">{wallet.label}</p>
@@ -296,7 +296,7 @@ export default function LoginPage() {
                     </div>
                     {connecting === wallet.id
                       ? <Loader2 className="w-4 h-4 animate-spin" style={{ color: '#00C896' }} />
-                      : <ChevronRight className="w-4 h-4 text-text-3 group-hover:text-green-500 transition-colors" />
+                      : <ChevronRight className="w-4 h-4 text-text-3 group-hover:text-[--green] transition-colors" />
                     }
                   </button>
                 ))}

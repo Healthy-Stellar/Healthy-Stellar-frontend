@@ -132,7 +132,7 @@ function MockDashboard() {
             ].map(s => (
               <div key={s.label} className="rounded-lg p-2"
                    style={{ background: 'var(--bg-raised)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <p className="text-[11px] font-bold text-white">{s.val}</p>
+                <p className="text-[11px] font-bold text-text-1">{s.val}</p>
                 <p className="text-[9px]" style={{ color: 'var(--text-3)' }}>{s.label}</p>
                 <div className="mt-1 flex gap-0.5">
                   {[...Array(5)].map((_, i) => (
@@ -152,7 +152,7 @@ function MockDashboard() {
                style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
             <div className="px-3 py-2 flex items-center justify-between"
                  style={{ background: 'var(--bg-raised)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              <span className="text-[10px] font-semibold text-white">Recent Records</span>
+              <span className="text-[10px] font-semibold text-text-1">Recent Records</span>
               <div className="badge-green text-[9px] px-1.5 py-0.5">4 verified</div>
             </div>
             {[
@@ -163,7 +163,7 @@ function MockDashboard() {
               <div key={i} className="px-3 py-2 flex items-center justify-between"
                    style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)', borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
                 <div>
-                  <p className="text-[10px] font-medium text-white">{r.type}</p>
+                  <p className="text-[10px] font-medium text-text-1">{r.type}</p>
                   <p className="text-[9px]" style={{ color: 'var(--text-3)' }}>{r.doc}</p>
                 </div>
                 <div className="flex items-center gap-1">

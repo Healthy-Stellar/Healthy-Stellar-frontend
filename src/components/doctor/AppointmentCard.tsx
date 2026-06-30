@@ -16,7 +16,7 @@ interface Props {
 const STATUS_COLORS: Record<Appointment['status'], string> = {
   pending: 'bg-yellow-100 text-yellow-700',
   confirmed: 'bg-[--green-subtle] text-[--green]',
-  completed: 'bg-green-100 text-green-700',
+  completed: 'bg-[--green-subtle] text-[--green]',
   cancelled: 'bg-red-100 text-red-700',
 };
 
@@ -72,7 +72,7 @@ export default function AppointmentCard({ appointment }: Props) {
                 <button
                   onClick={() => statusMutation.mutate('completed')}
                   disabled={statusMutation.isPending}
-                  className="rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-500 disabled:opacity-50"
+                  className="rounded-md bg-[--green] px-3 py-1.5 text-xs font-medium text-[#030D09] hover:bg-[#00DCA6] disabled:opacity-50"
                 >
                   Mark Complete
                 </button>

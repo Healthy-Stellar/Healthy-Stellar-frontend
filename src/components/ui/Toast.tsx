@@ -24,7 +24,7 @@ const ICONS: Record<ToastType, string> = {
 };
 
 const STYLES: Record<ToastType, string> = {
-  success: 'bg-green-600',
+  success: 'bg-[--green]',
   error: 'bg-red-600',
   warning: 'bg-yellow-500',
   info: 'bg-[--green]',
