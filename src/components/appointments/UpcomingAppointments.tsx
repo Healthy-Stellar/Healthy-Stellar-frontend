@@ -1,23 +1,17 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchAppointments, cancelAppointment } from '@/services/api.service';
+import { fetchAppointments, updateAppointmentStatus } from '@/services/api.service';
 import { useWalletStore } from '@/store/useWalletStore';
 import { withVideoRoom, isVideoLinkActive } from '@/lib/video';
 
 export default function UpcomingAppointments() {
   const { publicKey } = useWalletStore();
-  const queryClient = useQueryClient();
 
   const { data: appointments, isLoading } = useQuery({
     queryKey: ['patient-appointments', publicKey],
     queryFn: () => fetchAppointments(publicKey!, 'patient'),
     enabled: !!publicKey,
-  });
-
-  const cancelMutation = useMutation({
-    mutationFn: cancelAppointment,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['patient-appointments'] }),
   });
 
   const upcoming = appointments?.filter((a) => a.status !== 'cancelled' && a.status !== 'completed') ?? [];

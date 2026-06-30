@@ -61,12 +61,14 @@ const config: Config = {
       },
       animation: {
         'pulse-dot':  'pulse 2.5s cubic-bezier(0.4,0,0.6,1) infinite',
-        'fade-in':    'fadeIn 0.3s ease',
-        'slide-up':   'slideUp 0.3s ease',
+        'fade-in':      'fadeIn 0.3s ease',
+        'slide-up':     'slideUp 0.3s ease',
+        'slide-right':  'slideRight 0.25s ease-out',
       },
       keyframes: {
         fadeIn:  { from: { opacity: '0' }, to: { opacity: '1' } },
         slideUp: { from: { opacity: '0', transform: 'translateY(8px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+        slideRight: { from: { opacity: '0', transform: 'translateX(-16px)' }, to: { opacity: '1', transform: 'translateX(0)' } },
       },
     },
   },

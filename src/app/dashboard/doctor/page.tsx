@@ -10,6 +10,9 @@ import {
   Eye, Edit3, ArrowUpRight, Send, Search,
   MoreHorizontal, Loader2
 } from 'lucide-react';
+import { KpiSkeleton } from '@/components/ui/KpiSkeleton';
+import { DashboardSkeleton } from '@/components/ui/DashboardSkeleton';
+import { AppointmentSkeleton } from '@/components/ui/AppointmentSkeleton';
 
 /* ─── Sparkline ─────────────────────────────────────────────────── */
 function Sparkline({ values, color }: { values: number[]; color: string }) {
@@ -132,33 +135,37 @@ export default function DoctorDashboard() {
       )}
 
       {/* ── KPI cards ────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-        {kpis.map((k, i) => (
-          <div key={i} className="rounded-[14px] p-5"
-               style={{ background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.07)' }}>
-            <div className="flex items-start justify-between mb-4">
-              <div className="w-8 h-8 rounded-[9px] flex items-center justify-center"
-                   style={{ background: 'rgba(0,200,150,0.1)', border: '1px solid rgba(0,200,150,0.12)' }}>
-                <k.icon className="w-4 h-4" style={{ color: '#00C896' }} />
+      {patientsLoading ? (
+        <KpiSkeleton count={4} />
+      ) : (
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+          {kpis.map((k, i) => (
+            <div key={i} className="rounded-[14px] p-5"
+                 style={{ background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div className="flex items-start justify-between mb-4">
+                <div className="w-8 h-8 rounded-[9px] flex items-center justify-center"
+                     style={{ background: 'rgba(0,200,150,0.1)', border: '1px solid rgba(0,200,150,0.12)' }}>
+                  <k.icon className="w-4 h-4" style={{ color: '#00C896' }} />
+                </div>
+                <Sparkline values={k.spark} color={k.trend === 'down' ? '#F87171' : '#00C896'} />
               </div>
-              <Sparkline values={k.spark} color={k.trend === 'down' ? '#F87171' : '#00C896'} />
+              <p className="text-2xl font-bold tracking-tight text-text-1">{k.value}</p>
+              <p className="text-xs text-text-3 mt-0.5">{k.label}</p>
+              <div className="flex items-center gap-1 mt-2">
+                {k.trend === 'up'   && <TrendingUp   className="w-3 h-3" style={{ color: '#00C896' }} />}
+                {k.trend === 'down' && <TrendingUp   className="w-3 h-3 rotate-180" style={{ color: '#F87171' }} />}
+                {k.change && (
+                  <span className="text-2xs font-semibold"
+                        style={{ color: k.trend === 'up' ? '#00C896' : '#F87171' }}>
+                    {k.change}
+                  </span>
+                )}
+                <span className="text-2xs text-text-3">{k.sub}</span>
+              </div>
             </div>
-            <p className="text-2xl font-bold tracking-tight text-text-1">{k.value}</p>
-            <p className="text-xs text-text-3 mt-0.5">{k.label}</p>
-            <div className="flex items-center gap-1 mt-2">
-              {k.trend === 'up'   && <TrendingUp   className="w-3 h-3" style={{ color: '#00C896' }} />}
-              {k.trend === 'down' && <TrendingUp   className="w-3 h-3 rotate-180" style={{ color: '#F87171' }} />}
-              {k.change && (
-                <span className="text-2xs font-semibold"
-                      style={{ color: k.trend === 'up' ? '#00C896' : '#F87171' }}>
-                  {k.change}
-                </span>
-              )}
-              <span className="text-2xs text-text-3">{k.sub}</span>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* ── Main grid ────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-5">
@@ -181,9 +188,7 @@ export default function DoctorDashboard() {
           </div>
 
           {patientsLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-5 h-5 animate-spin text-text-3" />
-            </div>
+            <DashboardSkeleton rows={5} />
           ) : (
             <table className="data-table w-full">
               <thead>
@@ -304,7 +309,10 @@ export default function DoctorDashboard() {
               <span className="text-xs text-text-3">Jun 4, 2025</span>
             </div>
             <div className="space-y-2">
-              {schedule.map((slot, i) => (
+              {patientsLoading ? (
+                <AppointmentSkeleton rows={3} />
+              ) : (
+                schedule.map((slot, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <span className="text-2xs font-mono text-text-3 w-14 shrink-0 text-right">{slot.time}</span>
                   <div className="w-px self-stretch"
@@ -323,7 +331,7 @@ export default function DoctorDashboard() {
                     <span className="badge-green shrink-0 text-2xs">now</span>
                   )}
                 </div>
-              ))}
+              )))}
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import {
   Users, ShieldCheck, Activity, AlertTriangle,
@@ -9,6 +9,9 @@ import {
   UserCheck, FileText, Server, Database,
   RefreshCw, Eye, ArrowUpRight
 } from 'lucide-react';
+import { KpiSkeleton } from '@/components/ui/KpiSkeleton';
+import { DashboardSkeleton } from '@/components/ui/DashboardSkeleton';
+import { AppointmentSkeleton } from '@/components/ui/AppointmentSkeleton';
 
 /* ─── Types ─────────────────────────────────────────────────────── */
 type Role = 'PATIENT' | 'DOCTOR' | 'HOSPITAL' | 'ADMIN';
@@ -126,12 +129,18 @@ function HealthPill({ label, ok }: { label: string; ok: boolean }) {
 
 /* ─── Main page ──────────────────────────────────────────────────── */
 function AdminDashboardContent() {
+  const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<PlatformUser[]>(MOCK_USERS);
   const [requests, setRequests] = useState<RoleRequest[]>(MOCK_REQUESTS);
   const [audit, setAudit] = useState<AuditEntry[]>(MOCK_AUDIT);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<Role | 'ALL'>('ALL');
   const [activeTab, setActiveTab] = useState<'users' | 'approvals' | 'audit'>('users');
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, []);
 
   const totalUsers    = users.length;
   const pendingCount  = requests.length;
@@ -202,12 +211,16 @@ function AdminDashboardContent() {
       </div>
 
       {/* ── KPI cards ────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-7">
-        <StatCard icon={Users}         label="Total Users"         value={totalUsers}     sub={`${activeCount} active`}           />
-        <StatCard icon={Clock}         label="Pending Approvals"   value={pendingCount}   sub="Awaiting review"   accent="#FCD34D" />
-        <StatCard icon={ShieldCheck}   label="Active Sessions"     value={38}             sub="Across all roles"  accent="#60A5FA" />
-        <StatCard icon={AlertTriangle} label="Suspended Accounts"  value={suspendedCount} sub="Flagged or inactive" accent="#F87171" />
-      </div>
+      {loading ? (
+        <KpiSkeleton count={4} />
+      ) : (
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-7">
+          <StatCard icon={Users}         label="Total Users"         value={totalUsers}     sub={`${activeCount} active`}           />
+          <StatCard icon={Clock}         label="Pending Approvals"   value={pendingCount}   sub="Awaiting review"   accent="#FCD34D" />
+          <StatCard icon={ShieldCheck}   label="Active Sessions"     value={38}             sub="Across all roles"  accent="#60A5FA" />
+          <StatCard icon={AlertTriangle} label="Suspended Accounts"  value={suspendedCount} sub="Flagged or inactive" accent="#F87171" />
+        </div>
+      )}
 
       {/* ── Main grid ────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-5">
@@ -283,6 +296,9 @@ function AdminDashboardContent() {
                 </div>
               </div>
 
+              {loading ? (
+                <DashboardSkeleton rows={5} />
+              ) : (
               <table className="data-table w-full">
                 <thead>
                   <tr>
@@ -344,11 +360,15 @@ function AdminDashboardContent() {
                   )}
                 </tbody>
               </table>
+              )}
             </>
           )}
 
           {/* ── Pending Approvals ── */}
           {activeTab === 'approvals' && (
+            loading ? (
+              <AppointmentSkeleton rows={3} />
+            ) : (
             <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
               {requests.length === 0 && (
                 <div className="px-5 py-10 text-center">
@@ -400,7 +420,7 @@ function AdminDashboardContent() {
                 </div>
               ))}
             </div>
-          )}
+          ))}
 
           {/* ── Audit Log ── */}
           {activeTab === 'audit' && (
