@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { MedicalRecord, ShareToken, Doctor, TimeSlot, Appointment, NewRecordPayload, EncryptedRecord, StaffMember, PatientAdmission, HospitalMetrics, ComplianceReport } from '@/types';
+import { MedicalRecord, ShareToken, Doctor, TimeSlot, Appointment, NewRecordPayload, EncryptedRecord, StaffMember, PatientAdmission, HospitalMetrics, ComplianceReport, BulkRecordImportRow, BulkImportResponse } from '@/types';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? '',
@@ -80,3 +80,7 @@ export const bulkUpdateStaff = (
   action: 'activate' | 'deactivate' | 'remove'
 ) =>
   api.post('/hospital/staff/bulk', { hospitalAddress, staffIds, action }).then((r) => r.data);
+
+// Bulk import medical records
+export const bulkImportRecords = (patientAddress: string, records: BulkRecordImportRow[]) =>
+  api.post<BulkImportResponse>('/records/batch', { patientAddress, records }).then((r) => r.data);

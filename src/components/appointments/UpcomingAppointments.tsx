@@ -1,22 +1,58 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchAppointments, cancelAppointment } from '@/services/api.service';
+import { fetchAppointments, updateAppointmentStatus } from '@/services/api.service';
 import { useWalletStore } from '@/store/useWalletStore';
+import { Appointment } from '@/types';
+
+const STATUS_STYLES: Record<Appointment['status'], string> = {
+  pending:   'bg-yellow-100 text-yellow-700',
+  confirmed: 'bg-blue-100 text-blue-700',
+  completed: 'bg-green-100 text-green-700',
+  cancelled: 'bg-red-100 text-red-700',
+};
+
+function AppointmentItem({ appt }: { appt: Appointment }) {
+  const queryClient = useQueryClient();
+
+  const cancelMutation = useMutation({
+    mutationFn: () => updateAppointmentStatus(appt.id, 'cancelled'),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['patient-appointments'] }),
+  });
+
+  const canCancel = appt.status === 'pending' || appt.status === 'confirmed';
+
+  return (
+    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4">
+      <div>
+        <p className="font-medium text-slate-900">Dr. {appt.doctorName}</p>
+        <p className="text-xs text-slate-500">
+          {new Date(appt.datetime).toLocaleString()} · {appt.type}
+        </p>
+        <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[appt.status]}`}>
+          {appt.status}
+        </span>
+      </div>
+      {canCancel && (
+        <button
+          onClick={() => cancelMutation.mutate()}
+          disabled={cancelMutation.isPending}
+          className="rounded-md border border-red-200 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
+        >
+          {cancelMutation.isPending ? 'Cancelling…' : 'Cancel'}
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function UpcomingAppointments() {
   const { publicKey } = useWalletStore();
-  const queryClient = useQueryClient();
 
   const { data: appointments, isLoading } = useQuery({
     queryKey: ['patient-appointments', publicKey],
     queryFn: () => fetchAppointments(publicKey!, 'patient'),
     enabled: !!publicKey,
-  });
-
-  const cancelMutation = useMutation({
-    mutationFn: cancelAppointment,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['patient-appointments'] }),
   });
 
   const upcoming = appointments?.filter((a) => a.status !== 'cancelled' && a.status !== 'completed') ?? [];
@@ -30,26 +66,7 @@ export default function UpcomingAppointments() {
   return (
     <div className="space-y-3">
       {upcoming.map((appt) => (
-        <div key={appt.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4">
-          <div>
-            <p className="font-medium text-slate-900">Dr. {appt.doctorName}</p>
-            <p className="text-xs text-slate-500">
-              {new Date(appt.datetime).toLocaleString()} · {appt.type}
-            </p>
-            <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-              appt.status === 'confirmed' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'
-            }`}>
-              {appt.status}
-            </span>
-          </div>
-          <button
-            onClick={() => cancelMutation.mutate(appt.id)}
-            disabled={cancelMutation.isPending}
-            className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
-          >
-            Cancel
-          </button>
-        </div>
+        <AppointmentItem key={appt.id} appt={appt} />
       ))}
     </div>
   );

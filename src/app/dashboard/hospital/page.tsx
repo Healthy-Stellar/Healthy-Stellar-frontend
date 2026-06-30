@@ -7,6 +7,7 @@ import {
   XCircle, Clock, Trash2, UserCheck, UserX, RefreshCw,
   MoreHorizontal, Eye, Edit3, Download, PlusCircle,
 } from 'lucide-react';
+import { KpiSkeleton } from '@/components/ui/KpiSkeleton';
 import { useWalletStore } from '@/store/useWalletStore';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import {
@@ -233,16 +234,7 @@ function HospitalDashboardContent() {
 
       {/* ── Analytics cards ──────────────────────────────────── */}
       {loadingMetrics ? (
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-          {[0, 1, 2, 3].map(i => (
-            <div key={i} className="rounded-[14px] p-5 animate-pulse"
-                 style={{ background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <div className="h-8 w-8 rounded-[9px] mb-4" style={{ background: 'var(--bg-inset)' }} />
-              <div className="h-7 w-12 rounded mb-2" style={{ background: 'var(--bg-inset)' }} />
-              <div className="h-3 w-24 rounded" style={{ background: 'var(--bg-inset)' }} />
-            </div>
-          ))}
-        </div>
+        <KpiSkeleton count={4} />
       ) : errorMetrics ? (
         <div className="rounded-[12px] px-4 py-3.5 flex items-center gap-3 mb-6"
              style={{ background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.2)' }}>

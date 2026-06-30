@@ -117,3 +117,18 @@ export interface ComplianceReport {
   nextAudit: string;
   score: number;
 }
+
+export interface BulkRecordImportRow {
+  date: string;
+  doctorName: string;
+  diagnosis: string;
+  prescription?: string;
+  notes?: string;
+}
+
+export interface BulkImportResponse {
+  imported: number;
+  failed: number;
+  errors: Array<{ row: number; message: string }>;
+  records: MedicalRecord[];
+}
