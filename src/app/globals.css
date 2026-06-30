@@ -4,6 +4,7 @@
 
 /* ─── Design tokens ─────────────────────────────────────────────── */
 :root {
+  --primary:      #00C896;
   --green:        #00C896;
   --green-dim:    #00A07A;
   --green-glow:   rgba(0, 200, 150, 0.18);

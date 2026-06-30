@@ -15,7 +15,7 @@ export function Header() {
     : null;
 
   return (
-    <header className="border-b border-slate-200 bg-white">
+    <header className="border-b border-[--border] bg-[--bg-raised]">
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8"
         aria-label="Global"
@@ -23,19 +23,19 @@ export function Header() {
         {/* Brand */}
         <Link
           href="/"
-          className="text-lg font-bold text-blue-600 hover:text-blue-500"
+          className="text-lg font-bold text-[--green] hover:text-[#00DCA6]"
         >
           Healthy-Stellar
         </Link>
 
         {/* Role-specific nav links */}
-        <div className="flex items-center gap-6 text-sm font-medium text-slate-700">
+        <div className="flex items-center gap-6 text-sm font-medium text-[--text-2]">
           {role === 'PATIENT' && (
             <>
-              <Link href="/dashboard/patient" className="hover:text-blue-600">
+              <Link href="/dashboard/patient" className="hover:text-[--green]">
                 My Records
               </Link>
-              <Link href="/dashboard/patient" className="hover:text-blue-600">
+              <Link href="/dashboard/patient" className="hover:text-[--green]">
                 Appointments
               </Link>
             </>
@@ -43,10 +43,10 @@ export function Header() {
 
           {role === 'DOCTOR' && (
             <>
-              <Link href="/dashboard/doctor" className="hover:text-blue-600">
+              <Link href="/dashboard/doctor" className="hover:text-[--green]">
                 Patients
               </Link>
-              <Link href="/dashboard/doctor" className="hover:text-blue-600">
+              <Link href="/dashboard/doctor" className="hover:text-[--green]">
                 Consultations
               </Link>
             </>
@@ -54,10 +54,10 @@ export function Header() {
 
           {role === 'HOSPITAL' && (
             <>
-              <Link href="/dashboard/hospital" className="hover:text-blue-600">
+              <Link href="/dashboard/hospital" className="hover:text-[--green]">
                 Staff
               </Link>
-              <Link href="/dashboard/hospital" className="hover:text-blue-600">
+              <Link href="/dashboard/hospital" className="hover:text-[--green]">
                 Departments
               </Link>
             </>
@@ -65,10 +65,10 @@ export function Header() {
 
           {role === 'ADMIN' && (
             <>
-              <Link href="/dashboard/admin" className="hover:text-blue-600">
+              <Link href="/dashboard/admin" className="hover:text-[--green]">
                 Users
               </Link>
-              <Link href="/dashboard/admin" className="hover:text-blue-600">
+              <Link href="/dashboard/admin" className="hover:text-[--green]">
                 Settings
               </Link>
             </>
@@ -78,7 +78,7 @@ export function Header() {
           {role && (
             <Link
               href={ROLE_DASHBOARD_MAP[role]}
-              className="rounded-md bg-blue-50 px-3 py-1.5 text-blue-700 hover:bg-blue-100"
+              className="rounded-md bg-[--green-subtle] px-3 py-1.5 text-[--green] hover:bg-[rgba(0,200,150,0.14)]"
             >
               Dashboard
             </Link>
@@ -88,7 +88,7 @@ export function Header() {
           {walletAddress ? (
             <button
               onClick={clearAuth}
-              className="text-slate-500 hover:text-red-600"
+              className="text-[--text-3] hover:text-red-600"
               title={walletAddress}
             >
               {shortAddress} · Disconnect
@@ -96,7 +96,7 @@ export function Header() {
           ) : (
             <Link
               href="/login"
-              className="rounded-md bg-blue-600 px-3.5 py-2 text-white hover:bg-blue-500"
+              className="rounded-md bg-[--green] px-3.5 py-2 text-[#030D09] hover:bg-[#00DCA6]"
             >
               Connect Wallet
             </Link>

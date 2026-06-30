@@ -24,18 +24,18 @@ export default function SlotPicker({ doctorId, selected, onSelect }: Props) {
     queryFn: () => fetchSlots(doctorId),
   });
 
-  if (isLoading) return <div className="animate-pulse h-32 rounded-xl bg-slate-200" />;
+  if (isLoading) return <div className="animate-pulse h-32 rounded-xl bg-[--bg-inset]" />;
 
   const grouped = groupByDate(slots?.filter((s) => s.available) ?? []);
   const dates = Object.keys(grouped);
 
-  if (dates.length === 0) return <p className="text-sm text-slate-400">No available slots.</p>;
+  if (dates.length === 0) return <p className="text-sm text-[--text-3]">No available slots.</p>;
 
   return (
     <div className="space-y-4">
       {dates.map((date) => (
         <div key={date}>
-          <p className="text-xs font-medium text-slate-500 mb-2">{date}</p>
+          <p className="text-xs font-medium text-[--text-2] mb-2">{date}</p>
           <div className="flex flex-wrap gap-2">
             {grouped[date].map((slot) => (
               <button
@@ -43,8 +43,8 @@ export default function SlotPicker({ doctorId, selected, onSelect }: Props) {
                 onClick={() => onSelect(slot)}
                 className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
                   selected?.id === slot.id
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                    ? 'bg-[--green] text-[#030D09] border-[--green]'
+                    : 'border-[--border] text-[--text-2] hover:bg-[--bg-hover]'
                 }`}
               >
                 {new Date(slot.datetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
