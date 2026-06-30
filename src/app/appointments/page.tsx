@@ -10,6 +10,7 @@ import UpcomingAppointments from '@/components/appointments/UpcomingAppointments
 import { createAppointment } from '@/services/api.service';
 import { useWalletStore } from '@/store/useWalletStore';
 import { STELLAR_CONFIG } from '@/lib/stellar';
+import { withVideoRoom } from '@/lib/video';
 import { Doctor, TimeSlot, Appointment } from '@/types';
 import { TransactionBuilder, Networks, Operation, Asset } from '@stellar/stellar-sdk';
 
@@ -68,7 +69,7 @@ function BookingFlow() {
       });
     },
     onSuccess: (appt) => {
-      setConfirmed(appt);
+      setConfirmed(withVideoRoom(appt));
       setStep('confirmed');
     },
   });
