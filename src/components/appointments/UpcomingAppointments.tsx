@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchAppointments, cancelAppointment } from '@/services/api.service';
 import { useWalletStore } from '@/store/useWalletStore';
+import { withVideoRoom, isVideoLinkActive } from '@/lib/video';
 
 export default function UpcomingAppointments() {
   const { publicKey } = useWalletStore();
@@ -29,7 +30,7 @@ export default function UpcomingAppointments() {
 
   return (
     <div className="space-y-3">
-      {upcoming.map((appt) => (
+      {upcoming.map(withVideoRoom).map((appt) => (
         <div key={appt.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4">
           <div>
             <p className="font-medium text-slate-900">Dr. {appt.doctorName}</p>
@@ -42,13 +43,25 @@ export default function UpcomingAppointments() {
               {appt.status}
             </span>
           </div>
-          <button
-            onClick={() => cancelMutation.mutate(appt.id)}
-            disabled={cancelMutation.isPending}
-            className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
-          >
-            Cancel
-          </button>
+          <div className="flex items-center gap-3">
+            {appt.type === 'telemedicine' && isVideoLinkActive(appt) && (
+              <a
+                href={appt.videoRoomUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-medium text-blue-600 hover:underline"
+              >
+                Join Video Call
+              </a>
+            )}
+            <button
+              onClick={() => cancelMutation.mutate(appt.id)}
+              disabled={cancelMutation.isPending}
+              className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       ))}
     </div>

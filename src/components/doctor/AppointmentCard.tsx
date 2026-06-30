@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Appointment } from '@/types';
 import { updateAppointmentStatus } from '@/services/api.service';
+import { withVideoRoom, isVideoLinkActive } from '@/lib/video';
 import NewRecordForm from './NewRecordForm';
 import RecordDetailDrawer from '@/components/records/RecordDetailDrawer';
 import { fetchRecords } from '@/services/api.service';
@@ -20,7 +21,8 @@ const STATUS_COLORS: Record<Appointment['status'], string> = {
   cancelled: 'bg-red-100 text-red-700',
 };
 
-export default function AppointmentCard({ appointment }: Props) {
+export default function AppointmentCard({ appointment: rawAppointment }: Props) {
+  const appointment = withVideoRoom(rawAppointment);
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState(false);
   const [showRecordForm, setShowRecordForm] = useState(false);
@@ -56,6 +58,17 @@ export default function AppointmentCard({ appointment }: Props) {
 
       {expanded && (
         <div className="border-t border-slate-100 p-4 space-y-4">
+          {appointment.type === 'telemedicine' && isVideoLinkActive(appointment) && (
+            <a
+              href={appointment.videoRoomUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-500"
+            >
+              Join Video Call
+            </a>
+          )}
+
           {/* Status actions */}
           {appointment.status !== 'completed' && appointment.status !== 'cancelled' && (
             <div className="flex gap-2">

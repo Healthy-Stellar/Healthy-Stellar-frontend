@@ -48,6 +48,8 @@ export interface Appointment {
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   fee: number;
   txHash?: string;
+  videoRoomUrl?: string;
+  videoRoomExpiresAt?: string;
 }
 
 export interface NewRecordPayload {

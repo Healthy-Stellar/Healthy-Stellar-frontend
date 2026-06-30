@@ -46,7 +46,12 @@ export default function BookingConfirmation({ appointment, onDone }: Props) {
       <p className="text-sm text-slate-500 mb-1">
         {new Date(appointment.datetime).toLocaleString()} · {appointment.type}
       </p>
-      <p className="text-xs text-slate-400 mb-6">Ref: {appointment.id}</p>
+      <p className="text-xs text-slate-400 mb-6">
+        Ref: {appointment.id}
+        {appointment.type === 'telemedicine' && appointment.videoRoomUrl && (
+          <> · Video link will be available to join 15 minutes before your appointment.</>
+        )}
+      </p>
 
       <div className="flex gap-3">
         <button
