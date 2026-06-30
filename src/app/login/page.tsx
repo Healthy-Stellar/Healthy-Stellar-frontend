@@ -9,6 +9,8 @@ import {
   CheckCircle2, Wallet, AlertCircle
 } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
+import { useWalletStore } from '@/store/useWalletStore';
+import { ROLE_DASHBOARD_MAP } from '@/hooks/useRoleRedirect';
 
 type Role = 'PATIENT' | 'DOCTOR' | 'HOSPITAL';
 
@@ -51,6 +53,7 @@ const trustPoints = [
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { publicKey, role: walletRole } = useWalletStore();
   const [step, setStep] = useState<'role' | 'wallet'>('role');
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [connecting, setConnecting] = useState<string | null>(null);
