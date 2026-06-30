@@ -1,22 +1,17 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchAppointments, cancelAppointment } from '@/services/api.service';
+import { fetchAppointments, updateAppointmentStatus } from '@/services/api.service';
 import { useWalletStore } from '@/store/useWalletStore';
+import { withVideoRoom, isVideoLinkActive } from '@/lib/video';
 
 export default function UpcomingAppointments() {
   const { publicKey } = useWalletStore();
-  const queryClient = useQueryClient();
 
   const { data: appointments, isLoading } = useQuery({
     queryKey: ['patient-appointments', publicKey],
     queryFn: () => fetchAppointments(publicKey!, 'patient'),
     enabled: !!publicKey,
-  });
-
-  const cancelMutation = useMutation({
-    mutationFn: cancelAppointment,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['patient-appointments'] }),
   });
 
   const upcoming = appointments?.filter((a) => a.status !== 'cancelled' && a.status !== 'completed') ?? [];
@@ -42,13 +37,25 @@ export default function UpcomingAppointments() {
               {appt.status}
             </span>
           </div>
-          <button
-            onClick={() => cancelMutation.mutate(appt.id)}
-            disabled={cancelMutation.isPending}
-            className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
-          >
-            Cancel
-          </button>
+          <div className="flex items-center gap-3">
+            {appt.type === 'telemedicine' && isVideoLinkActive(appt) && (
+              <a
+                href={appt.videoRoomUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-medium text-blue-600 hover:underline"
+              >
+                Join Video Call
+              </a>
+            )}
+            <button
+              onClick={() => cancelMutation.mutate(appt.id)}
+              disabled={cancelMutation.isPending}
+              className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       ))}
     </div>

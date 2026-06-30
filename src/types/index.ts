@@ -48,6 +48,8 @@ export interface Appointment {
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   fee: number;
   txHash?: string;
+  videoRoomUrl?: string;
+  videoRoomExpiresAt?: string;
 }
 
 export interface NewRecordPayload {
@@ -116,4 +118,19 @@ export interface ComplianceReport {
   lastAudit: string;
   nextAudit: string;
   score: number;
+}
+
+export interface BulkRecordImportRow {
+  date: string;
+  doctorName: string;
+  diagnosis: string;
+  prescription?: string;
+  notes?: string;
+}
+
+export interface BulkImportResponse {
+  imported: number;
+  failed: number;
+  errors: Array<{ row: number; message: string }>;
+  records: MedicalRecord[];
 }

@@ -49,7 +49,7 @@ To get a local copy up and running, follow these steps:
 
 Clone the repository:
 
-git clone https://github.com/your-username/Healthy-Stellar-frontend.gitt
+git clone https://github.com/your-username/Healthy-Stellar-frontend.git
 
 Navigate to the project directory:
 
@@ -96,6 +96,22 @@ The following files are already listed in `.gitignore` and must never be committ
 - `*.pem` — private key files
 
 If you accidentally commit a secret, rotate it immediately and rewrite git history.
+
+## API Documentation
+
+Full API reference documenting all endpoints, request/response shapes, and authentication is available at:
+
+📄 [`docs/api.md`](./docs/api.md)
+
+### Quick Overview
+
+| Endpoint Group | Base Path | Auth |
+|----------------|-----------|------|
+| Medical Records | `/records` | Public key |
+| Doctors & Slots | `/doctors` | Public key |
+| Appointments | `/appointments` | Public key |
+| Hospital Management | `/hospital` | Role: HOSPITAL |
+| Users | `/users` | Public key |
 
 ## Switching to Mainnet
 

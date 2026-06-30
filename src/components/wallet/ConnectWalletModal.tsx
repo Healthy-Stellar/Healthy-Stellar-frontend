@@ -38,12 +38,12 @@ function useFocusTrap(ref: React.RefObject<HTMLElement | null>) {
       if (e.shiftKey) {
         if (document.activeElement === f[0]) {
           e.preventDefault();
-          f[f.length - 1].focus();
+          f[f.length - 1]?.focus();
         }
       } else {
         if (document.activeElement === f[f.length - 1]) {
           e.preventDefault();
-          f[0].focus();
+          f[0]?.focus();
         }
       }
     }

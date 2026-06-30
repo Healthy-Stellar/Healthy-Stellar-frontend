@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { MedicalRecord, ShareToken, Doctor, TimeSlot, Appointment, NewRecordPayload, EncryptedRecord, StaffMember, PatientAdmission, HospitalMetrics, ComplianceReport } from '@/types';
+import { MedicalRecord, ShareToken, Doctor, TimeSlot, Appointment, NewRecordPayload, EncryptedRecord, StaffMember, PatientAdmission, HospitalMetrics, ComplianceReport, BulkRecordImportRow, BulkImportResponse } from '@/types';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL ?? '',
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -26,7 +26,7 @@ export const shareRecord = (recordId: string, providerAddress: string) =>
 
 // Doctors & Slots
 export const fetchDoctors = (specialty?: string, signal?: AbortSignal) =>
-  api.get<Doctor[]>('/doctors', { params: specialty ? { specialty } : {}, signal }).then((r) => r.data);
+  api.get<Doctor[]>('/doctors', { params: specialty ? { specialty } : {}, ...(signal ? { signal } : {}) }).then((r) => r.data);
 
 export const fetchDoctorPatientsPaginated = (doctorAddress: string, cursor?: string, limit = 10) =>
   api.get<PaginatedResponse<{ name: string; initials: string; age: number; lastVisit: string; status: string; records: number; addr: string }>>('/doctors/patients', {
@@ -80,3 +80,7 @@ export const bulkUpdateStaff = (
   action: 'activate' | 'deactivate' | 'remove'
 ) =>
   api.post('/hospital/staff/bulk', { hospitalAddress, staffIds, action }).then((r) => r.data);
+
+// Bulk import medical records
+export const bulkImportRecords = (patientAddress: string, records: BulkRecordImportRow[]) =>
+  api.post<BulkImportResponse>('/records/batch', { patientAddress, records }).then((r) => r.data);

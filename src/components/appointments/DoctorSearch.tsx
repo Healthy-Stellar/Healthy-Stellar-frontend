@@ -18,8 +18,8 @@ export default function DoctorSearch({ onSelect }: Props) {
   const [debouncedSpecialty, setDebouncedSpecialty] = useState('');
   const [showSpinner, setShowSpinner] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
-  const debounceTimer = useRef<ReturnType<typeof setTimeout>>();
-  const spinnerTimer = useRef<ReturnType<typeof setTimeout>>();
+  const debounceTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const spinnerTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const handleSpecialtyChange = useCallback((value: string) => {
     setSpecialty(value);
@@ -42,19 +42,18 @@ export default function DoctorSearch({ onSelect }: Props) {
     };
   }, []);
 
-  const { data: doctors, isLoading, isFetching } = useQuery({
+  const { data: doctors, isLoading, isFetching } = useQuery<Doctor[]>({
     queryKey: ['doctors', debouncedSpecialty],
     queryFn: ({ signal }) => {
       abortRef.current?.abort();
       const controller = new AbortController();
       abortRef.current = controller;
 
-      const combinedSignal = signal;
       controller.signal.addEventListener('abort', () => {
         // no-op: query cancellation handled by React Query
       });
 
-      return fetchDoctors(debouncedSpecialty || undefined, combinedSignal);
+      return fetchDoctors(debouncedSpecialty || undefined, signal);
     },
   });
 

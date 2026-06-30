@@ -22,7 +22,7 @@ export function clearSentryUser() {
 }
 
 export function captureError(error: Error, context?: Record<string, unknown>) {
-  Sentry.captureException(error, { extra: context });
+  Sentry.captureException(error, context ? { extra: context } : undefined);
 }
 
 export function captureMessage(message: string, level: Sentry.SeverityLevel = 'info') {

@@ -37,7 +37,7 @@ export default function SlotPicker({ doctorId, selected, onSelect }: Props) {
         <div key={date}>
           <p className="text-xs font-medium text-text-2 mb-2">{date}</p>
           <div className="flex flex-wrap gap-2">
-            {grouped[date].map((slot) => (
+            {grouped[date]?.map((slot) => (
               <button
                 key={slot.id}
                 onClick={() => onSelect(slot)}

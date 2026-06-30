@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Appointment } from '@/types';
 import { updateAppointmentStatus } from '@/services/api.service';
+import { withVideoRoom, isVideoLinkActive } from '@/lib/video';
 import NewRecordForm from './NewRecordForm';
 import RecordDetailDrawer from '@/components/records/RecordDetailDrawer';
 import { fetchRecords } from '@/services/api.service';
@@ -20,7 +21,8 @@ const STATUS_COLORS: Record<Appointment['status'], string> = {
   cancelled: 'bg-red-100 text-red-700',
 };
 
-export default function AppointmentCard({ appointment }: Props) {
+export default function AppointmentCard({ appointment: rawAppointment }: Props) {
+  const appointment = withVideoRoom(rawAppointment);
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState(false);
   const [showRecordForm, setShowRecordForm] = useState(false);

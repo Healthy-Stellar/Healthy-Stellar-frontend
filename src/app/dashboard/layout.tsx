@@ -2,14 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import {
   Activity, LayoutDashboard, FileText, Shield,
   Calendar, Clock, Settings, LogOut,
   Stethoscope, Users, Bell, ChevronDown,
-  Hospital, ClipboardList, ShieldCheck,
+  Hospital, ClipboardList, ShieldCheck, Menu, X,
 } from 'lucide-react';
+import NotificationBell from '@/components/navigation/NotificationBell';
 import { useWalletStore } from '@/store/useWalletStore';
 import { useAuthStore } from '@/store/authStore';
+import { Avatar } from '@/components/ui/Avatar';
 
 const patientNav = [
   { href: '/dashboard/patient',              icon: LayoutDashboard, label: 'Overview' },
@@ -71,6 +74,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router    = useRouter();
   const { publicKey, disconnect } = useWalletStore();
   const { clearAuth }             = useAuthStore();
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   const isDoctor   = pathname.startsWith('/dashboard/doctor');
   const isHospital = pathname.startsWith('/dashboard/hospital');
@@ -78,6 +82,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const navItems = isDoctor ? doctorNav : isHospital ? hospitalNav : patientNav;
 
   const initials = publicKey ? publicKey.slice(0, 2).toUpperCase() : '??';
+
+  // Close the mobile drawer on route change
+  useEffect(() => {
+    setMobileDrawerOpen(false);
+  }, [pathname]);
 
   function handleDisconnect() {
     disconnect();
@@ -150,10 +159,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="px-3 py-4 shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           <div className="flex items-center gap-3 px-3 py-2.5 rounded-[9px]"
                style={{ background: 'var(--bg-inset)' }}>
-            <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                 style={{ background: 'rgba(0,200,150,0.15)', color: '#00C896', border: '1px solid rgba(0,200,150,0.2)' }}>
-              {initials}
-            </div>
+            <Avatar
+              initials={initials}
+              alt={portalLabel(pathname)}
+              size={28}
+            />
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-text-1 truncate">
                 {portalLabel(pathname).replace(' Portal', '')}
@@ -203,10 +213,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <button className="btn-icon rounded-[9px]" aria-label="Notifications">
               <Bell className="w-4 h-4" />
             </button>
-            <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-                 style={{ background: 'rgba(0,200,150,0.15)', color: '#00C896', border: '1px solid rgba(0,200,150,0.2)' }}>
-              {initials}
-            </div>
+            <Avatar
+              initials={initials}
+              alt={portalLabel(pathname)}
+              size={28}
+            />
+            {/* Mobile drawer toggle */}
+            <button
+              onClick={() => setMobileDrawerOpen(true)}
+              className="lg:hidden p-2 rounded-lg text-text-2 hover:text-text-1 hover:bg-surface-inset transition-colors"
+              aria-label="Open navigation menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
           </div>
         </div>
 
@@ -215,6 +234,107 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {children}
         </main>
       </div>
+
+      {/* ── Mobile navigation drawer ────────────────────────────────── */}
+      {mobileDrawerOpen && (
+        <div
+          className="fixed inset-0 z-50 lg:hidden"
+          onClick={() => setMobileDrawerOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50" />
+
+          {/* Drawer panel */}
+          <div
+            className="absolute left-0 top-0 bottom-0 w-[280px] flex flex-col overflow-y-auto animate-slide-right"
+            style={{
+              background: 'var(--bg-base)',
+              borderRight: '1px solid rgba(255,255,255,0.06)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Drawer header */}
+            <div
+              className="px-5 py-4 flex items-center justify-between shrink-0"
+              style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', height: '60px' }}
+            >
+              <Link href="/" className="flex items-center gap-2.5">
+                <div
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{ background: 'rgba(0,200,150,0.1)', border: '1px solid rgba(0,200,150,0.2)' }}
+                >
+                  <Activity className="w-3.5 h-3.5" style={{ color: '#00C896' }} />
+                </div>
+                <span className="text-sm font-bold text-text-1">
+                  Healthy<span style={{ color: '#00C896' }}>Stellar</span>
+                </span>
+              </Link>
+              <button
+                onClick={() => setMobileDrawerOpen(false)}
+                className="p-1.5 rounded-lg text-text-2 hover:text-text-1 transition-colors"
+                aria-label="Close navigation menu"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Portal indicator */}
+            <div
+              className="mx-3 mt-3 mb-2 px-3 py-2 rounded-[9px] flex items-center gap-2.5"
+              style={{ background: 'var(--bg-inset)' }}
+            >
+              {portalIcon(pathname)}
+              <span className="text-xs font-semibold text-text-1">{portalLabel(pathname)}</span>
+            </div>
+
+            {/* Nav items */}
+            <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileDrawerOpen(false)}
+                >
+                  <span
+                    className={pathname === item.href ? 'nav-item-active' : 'nav-item'}
+                    style={{ display: 'flex' }}
+                  >
+                    <item.icon className="w-4 h-4 shrink-0" />
+                    {item.label}
+                  </span>
+                </Link>
+              ))}
+            </nav>
+
+            {/* Drawer user footer */}
+            <div className="px-3 py-4 shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <div
+                className="flex items-center gap-3 px-3 py-2.5 rounded-[9px]"
+                style={{ background: 'var(--bg-inset)' }}
+              >
+                <Avatar initials={initials} alt={portalLabel(pathname)} size={28} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-text-1 truncate">
+                    {portalLabel(pathname).replace(' Portal', '')}
+                  </p>
+                  <p className="text-2xs text-text-3 font-mono truncate">{truncateKey(publicKey)}</p>
+                </div>
+              </div>
+              <button
+                onClick={handleDisconnect}
+                className="mt-2 nav-item text-sm w-full"
+                style={{ color: 'var(--text-3)' }}
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                Disconnect
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
