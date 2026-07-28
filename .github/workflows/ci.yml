@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel in-flight runs for the same branch/PR so pushes don't queue up.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Lint · Test · Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ── Lint ────────────────────────────────────────────────────────────────
+      - name: Lint
+        run: npm run lint
+
+      # ── Tests ───────────────────────────────────────────────────────────────
+      # Jest + jest-environment-jsdom are already configured in jest.config.ts.
+      # Remove or gate this step behind a condition once the Jest setup issue
+      # referenced in the task is resolved if tests don't exist yet.
+      - name: Test
+        run: npm test -- --ci --forceExit
+
+      # ── Build ───────────────────────────────────────────────────────────────
+      # NEXT_PUBLIC_API_URL must be present at build time (Next.js inlines it).
+      # A placeholder is fine for CI; it is not used at runtime here.
+      # SENTRY_AUTH_TOKEN is optional: if the secret is not set, Sentry source-map
+      # upload is skipped but the build still succeeds.
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3000/api/v1
+          NEXT_PUBLIC_STELLAR_NETWORK: testnet
+          NEXT_PUBLIC_HORIZON_URL: https://horizon-testnet.stellar.org
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
