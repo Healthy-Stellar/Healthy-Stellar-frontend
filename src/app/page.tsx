@@ -1,4 +1,4 @@
-import { ThemeToggle } from "@/components/ThemeToggle"
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Home() {
   return (
@@ -11,5 +11,5 @@ export default function Home() {
         <h1 className="text-4xl font-bold">Instant verification, infinite traceability.</h1>
       </div>
     </main>
-  )
+  );
 }

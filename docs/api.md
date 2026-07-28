@@ -21,10 +21,10 @@
 
 All endpoints require a Stellar wallet public key passed as a query parameter or request body. Role-based access is enforced server-side.
 
-| Method | Requirement |
-|--------|-------------|
-| Public  | Landing pages, documentation |
-| Authenticated | Any connected wallet |
+| Method        | Requirement                              |
+| ------------- | ---------------------------------------- |
+| Public        | Landing pages, documentation             |
+| Authenticated | Any connected wallet                     |
 | Role-specific | `PATIENT`, `DOCTOR`, `HOSPITAL`, `ADMIN` |
 
 ---
@@ -39,13 +39,14 @@ GET /records
 
 **Query Parameters:**
 
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| `patientAddress` | `string` | Yes | Stellar public key of the patient |
-| `cursor` | `string` | No | Pagination cursor |
-| `limit` | `number` | No | Page size (default: 10) |
+| Param            | Type     | Required | Description                       |
+| ---------------- | -------- | -------- | --------------------------------- |
+| `patientAddress` | `string` | Yes      | Stellar public key of the patient |
+| `cursor`         | `string` | No       | Pagination cursor                 |
+| `limit`          | `number` | No       | Page size (default: 10)           |
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -66,8 +67,10 @@ GET /records
 ### Create Record
 
 ```
+
 POST /records
-```
+
+````
 
 **Request Body:**
 ```json
@@ -77,9 +80,10 @@ POST /records
   "prescription": "Cetirizine 10mg",
   "notes": "Patient reported mild symptoms"
 }
-```
+````
 
 **Response:** `201 Created`
+
 ```json
 {
   "id": "HS-001401",
@@ -99,6 +103,7 @@ POST /records/:id/share
 ```
 
 **Request Body:**
+
 ```json
 {
   "providerAddress": "GCMR...4BNP"
@@ -106,6 +111,7 @@ POST /records/:id/share
 ```
 
 **Response:**
+
 ```json
 {
   "token": "sh-abc123def456",
@@ -124,17 +130,18 @@ POST /records/encrypted
 
 **Form Fields:**
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `patientAddress` | `string` | Yes | Patient's Stellar public key |
-| `fileName` | `string` | Yes | Original file name |
-| `fileType` | `string` | Yes | MIME type (application/pdf, image/jpeg, image/png) |
-| `contentHash` | `string` | Yes | SHA-256 hash of encrypted content |
-| `encryptedFile` | `file` | Yes | AES-256-GCM encrypted file blob |
-| `iv` | `file` | Yes | Initialization vector (12 bytes) |
-| `exportedKey` | `file` | Yes | AES key exported in raw format |
+| Field            | Type     | Required | Description                                        |
+| ---------------- | -------- | -------- | -------------------------------------------------- |
+| `patientAddress` | `string` | Yes      | Patient's Stellar public key                       |
+| `fileName`       | `string` | Yes      | Original file name                                 |
+| `fileType`       | `string` | Yes      | MIME type (application/pdf, image/jpeg, image/png) |
+| `contentHash`    | `string` | Yes      | SHA-256 hash of encrypted content                  |
+| `encryptedFile`  | `file`   | Yes      | AES-256-GCM encrypted file blob                    |
+| `iv`             | `file`   | Yes      | Initialization vector (12 bytes)                   |
+| `exportedKey`    | `file`   | Yes      | AES key exported in raw format                     |
 
 **Response:** `201 Created`
+
 ```json
 {
   "id": "enc-789abc",
@@ -154,8 +161,10 @@ POST /records/encrypted
 ### List Doctors
 
 ```
+
 GET /doctors
-```
+
+````
 
 **Query Parameters:**
 
@@ -173,7 +182,7 @@ GET /doctors
     "address": "GCMR...4BNP"
   }
 ]
-```
+````
 
 ### Get Doctor Patients (Paginated)
 
@@ -183,10 +192,10 @@ GET /doctors/patients
 
 **Query Parameters:**
 
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| `doctorAddress` | `string` | Yes | Doctor's Stellar public key |
-| `cursor` | `string` | No | Pagination cursor |
+| Param           | Type     | Required | Description                 |
+| --------------- | -------- | -------- | --------------------------- |
+| `doctorAddress` | `string` | Yes      | Doctor's Stellar public key |
+| `cursor`        | `string` | No       | Pagination cursor           |
 
 ---
 
@@ -200,12 +209,13 @@ GET /appointments
 
 **Query Parameters:**
 
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| `address` | `string` | Yes | Stellar public key |
-| `role` | `string` | Yes | `patient` or `doctor` |
+| Param     | Type     | Required | Description           |
+| --------- | -------- | -------- | --------------------- |
+| `address` | `string` | Yes      | Stellar public key    |
+| `role`    | `string` | Yes      | `patient` or `doctor` |
 
 **Response:**
+
 ```json
 [
   {
@@ -231,6 +241,7 @@ POST /appointments
 ```
 
 **Request Body:**
+
 ```json
 {
   "doctorId": "doc-001",
@@ -244,6 +255,7 @@ POST /appointments
 ```
 
 **Response:** `201 Created`
+
 ```json
 {
   "id": "apt-001",
@@ -269,8 +281,10 @@ PATCH /appointments/:id/cancel
 ### Get Metrics
 
 ```
+
 GET /hospital/metrics
-```
+
+````
 
 **Query Parameters:**
 
@@ -288,7 +302,7 @@ GET /hospital/metrics
   "complianceScore": 94,
   "staffCount": 89
 }
-```
+````
 
 ### List Staff
 
@@ -298,11 +312,12 @@ GET /hospital/staff
 
 **Query Parameters:**
 
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| `hospitalAddress` | `string` | Yes | Hospital's Stellar public key |
+| Param             | Type     | Required | Description                   |
+| ----------------- | -------- | -------- | ----------------------------- |
+| `hospitalAddress` | `string` | Yes      | Hospital's Stellar public key |
 
 **Response:**
+
 ```json
 [
   {
@@ -326,11 +341,12 @@ GET /hospital/admissions
 
 **Query Parameters:**
 
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| `hospitalAddress` | `string` | Yes | Hospital's Stellar public key |
+| Param             | Type     | Required | Description                   |
+| ----------------- | -------- | -------- | ----------------------------- |
+| `hospitalAddress` | `string` | Yes      | Hospital's Stellar public key |
 
 **Response:**
+
 ```json
 
 ---
@@ -340,15 +356,17 @@ GET /hospital/admissions
 ### Get User Role
 
 ```
+
 GET /users/:publicKey/role
-```
+
+````
 
 **Response:**
 ```json
 {
   "role": "PATIENT"
 }
-```
+````
 
 ---
 
@@ -376,35 +394,38 @@ All endpoints return errors in the following format:
 }
 ```
 
-| Status Code | Meaning |
-|-------------|---------|
-| `400` | Bad Request — invalid parameters |
-| `401` | Unauthorized — missing or invalid authentication |
-| `403` | Forbidden — insufficient role permissions |
-| `404` | Not Found — resource does not exist |
-| `409` | Conflict — duplicate or conflicting state |
-| `429` | Too Many Requests — rate limit exceeded |
-| `500` | Internal Server Error |
+| Status Code | Meaning                                          |
+| ----------- | ------------------------------------------------ |
+| `400`       | Bad Request — invalid parameters                 |
+| `401`       | Unauthorized — missing or invalid authentication |
+| `403`       | Forbidden — insufficient role permissions        |
+| `404`       | Not Found — resource does not exist              |
+| `409`       | Conflict — duplicate or conflicting state        |
+| `429`       | Too Many Requests — rate limit exceeded          |
+| `500`       | Internal Server Error                            |
 
 [
-  {
-    "id": "adm-001",
-    "patientName": "John Doe",
-    "patientAddress": "GAKP...X7QM",
-    "admissionDate": "2025-06-28",
-    "dischargeDate": null,
-    "department": "Emergency",
-    "status": "admitted",
-    "assignedDoctor": "Dr. Sarah Smith"
-  }
+{
+"id": "adm-001",
+"patientName": "John Doe",
+"patientAddress": "GAKP...X7QM",
+"admissionDate": "2025-06-28",
+"dischargeDate": null,
+"department": "Emergency",
+"status": "admitted",
+"assignedDoctor": "Dr. Sarah Smith"
+}
 ]
+
 ```
 
 ### List Compliance Reports
 
 ```
+
 GET /hospital/compliance
-```
+
+````
 
 **Query Parameters:**
 
@@ -425,7 +446,7 @@ GET /hospital/compliance
     "score": 96
   }
 ]
-```
+````
 
 ### Bulk Update Staff
 
@@ -434,6 +455,7 @@ POST /hospital/staff/bulk
 ```
 
 **Request Body:**
+
 ```json
 {
   "hospitalAddress": "GPX2...9KLF",
@@ -444,7 +466,7 @@ POST /hospital/staff/bulk
 
 **Supported Actions:** `activate`, `deactivate`, `remove`
 
-```
+````
 
 **Response:**
 ```json
@@ -452,7 +474,7 @@ POST /hospital/staff/bulk
   "id": "apt-001",
   "status": "cancelled"
 }
-```
+````
 
 ### Update Appointment Status
 
@@ -461,6 +483,7 @@ PATCH /appointments/:id/status
 ```
 
 **Request Body:**
+
 ```json
 {
   "status": "confirmed"
@@ -468,6 +491,7 @@ PATCH /appointments/:id/status
 ```
 
 **Response:**
+
 ```json
 {
   "id": "apt-001",
@@ -478,6 +502,7 @@ PATCH /appointments/:id/status
 | `limit` | `number` | No | Page size (default: 10) |
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -503,6 +528,7 @@ GET /doctors/:doctorId/slots
 ```
 
 **Response:**
+
 ```json
 [
   {
@@ -518,8 +544,10 @@ GET /doctors/:doctorId/slots
 ### Batch Import Records
 
 ```
+
 POST /records/batch
-```
+
+````
 
 **Request Body:**
 ```json
@@ -535,16 +563,15 @@ POST /records/batch
     }
   ]
 }
-```
+````
 
 **Response:**
+
 ```json
 {
   "imported": 12,
   "failed": 1,
-  "errors": [
-    { "row": 3, "message": "Missing required field: diagnosis" }
-  ],
+  "errors": [{ "row": 3, "message": "Missing required field: diagnosis" }],
   "records": [
     {
       "id": "HS-001402",
@@ -555,6 +582,8 @@ POST /records/batch
     }
   ]
 }
+```
+
 ```
 
 ```

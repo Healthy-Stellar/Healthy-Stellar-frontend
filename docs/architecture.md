@@ -19,17 +19,17 @@
 
 ## Tech Stack Overview
 
-| Technology | Purpose |
-|---|---|
-| **Next.js 14 (App Router)** | React framework — file-based routing, server components, layouts |
-| **TypeScript** | Static typing across the entire codebase |
-| **Zustand** | Lightweight client-side state (wallet connection, user role) |
-| **TanStack Query v5** | Server-state management — fetching, caching, and synchronising API data |
-| **Stellar SDK (`@stellar/stellar-sdk`)** | Building, signing, and submitting Stellar transactions |
-| **`@soroban-react/core`** | Soroban smart-contract integration helpers |
-| **Axios** | HTTP client used inside the API service layer |
-| **shadcn-ui + Tailwind CSS** | UI component library and utility-first styling |
-| **Lucide React** | Icon set |
+| Technology                               | Purpose                                                                 |
+| ---------------------------------------- | ----------------------------------------------------------------------- |
+| **Next.js 14 (App Router)**              | React framework — file-based routing, server components, layouts        |
+| **TypeScript**                           | Static typing across the entire codebase                                |
+| **Zustand**                              | Lightweight client-side state (wallet connection, user role)            |
+| **TanStack Query v5**                    | Server-state management — fetching, caching, and synchronising API data |
+| **Stellar SDK (`@stellar/stellar-sdk`)** | Building, signing, and submitting Stellar transactions                  |
+| **`@soroban-react/core`**                | Soroban smart-contract integration helpers                              |
+| **Axios**                                | HTTP client used inside the API service layer                           |
+| **shadcn-ui + Tailwind CSS**             | UI component library and utility-first styling                          |
+| **Lucide React**                         | Icon set                                                                |
 
 ---
 
@@ -87,10 +87,10 @@ The app uses three distinct layers of state. Choosing the right layer for new st
 
 Zustand stores hold state that belongs to the current browser session and does not come from the server.
 
-| Store | What it holds |
-|---|---|
-| `useWalletStore` | `publicKey`, `role`, `network` — set after wallet connection |
-| `useAuthStore` | `walletAddress`, `role`, `isLoading` — alternative auth state slice |
+| Store            | What it holds                                                       |
+| ---------------- | ------------------------------------------------------------------- |
+| `useWalletStore` | `publicKey`, `role`, `network` — set after wallet connection        |
+| `useAuthStore`   | `walletAddress`, `role`, `isLoading` — alternative auth state slice |
 
 Both stores use the `persist` middleware so the session survives a page refresh (stored in `localStorage`).
 
@@ -110,9 +110,9 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchRecords } from '@/services/api.service';
 
 const { data, isLoading, isError } = useQuery({
-  queryKey: ['records', publicKey],   // cache key — include all variables the query depends on
+  queryKey: ['records', publicKey], // cache key — include all variables the query depends on
   queryFn: () => fetchRecords(publicKey!),
-  enabled: !!publicKey,               // only run when publicKey is available
+  enabled: !!publicKey, // only run when publicKey is available
 });
 ```
 
@@ -124,7 +124,9 @@ import { createAppointment } from '@/services/api.service';
 
 const mutation = useMutation({
   mutationFn: createAppointment,
-  onSuccess: (data) => { /* handle success */ },
+  onSuccess: (data) => {
+    /* handle success */
+  },
 });
 ```
 
@@ -143,7 +145,7 @@ All HTTP calls go through a single Axios instance defined in `src/services/api.s
 ```ts
 // src/services/api.service.ts
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,  // set in .env.local
+  baseURL: process.env.NEXT_PUBLIC_API_URL, // set in .env.local
   headers: { 'Content-Type': 'application/json' },
 });
 ```
@@ -225,9 +227,9 @@ const tx = new TransactionBuilder(account, {
   .addOperation(
     Operation.payment({
       destination: doctorAddress,
-      asset: Asset.native(),   // XLM
+      asset: Asset.native(), // XLM
       amount: '10',
-    })
+    }),
   )
   .setTimeout(30)
   .build();
@@ -238,19 +240,17 @@ const signedXdr = await window.freighter.signTransaction(tx.toXDR(), {
 });
 
 // 4. Submit to the network
-await server.submitTransaction(
-  TransactionBuilder.fromXDR(signedXdr, /* passphrase */)
-);
+await server.submitTransaction(TransactionBuilder.fromXDR(signedXdr /* passphrase */));
 ```
 
 ### Testnet vs. Mainnet
 
-| | Testnet | Mainnet |
-|---|---|---|
-| `NEXT_PUBLIC_STELLAR_NETWORK` | `testnet` | `mainnet` |
-| `NEXT_PUBLIC_HORIZON_URL` | `https://horizon-testnet.stellar.org` | `https://horizon.stellar.org` |
-| Network passphrase | `Networks.TESTNET` | `Networks.PUBLIC` |
-| XLM | Free via [Friendbot](https://laboratory.stellar.org/#account-creator?network=test) | Real value |
+|                               | Testnet                                                                            | Mainnet                       |
+| ----------------------------- | ---------------------------------------------------------------------------------- | ----------------------------- |
+| `NEXT_PUBLIC_STELLAR_NETWORK` | `testnet`                                                                          | `mainnet`                     |
+| `NEXT_PUBLIC_HORIZON_URL`     | `https://horizon-testnet.stellar.org`                                              | `https://horizon.stellar.org` |
+| Network passphrase            | `Networks.TESTNET`                                                                 | `Networks.PUBLIC`             |
+| XLM                           | Free via [Friendbot](https://laboratory.stellar.org/#account-creator?network=test) | Real value                    |
 
 ---
 
@@ -268,10 +268,10 @@ export type UserRole = 'PATIENT' | 'DOCTOR' | 'HOSPITAL' | 'ADMIN';
 ```ts
 // src/hooks/useRoleRedirect.ts
 export const ROLE_DASHBOARD_MAP: Record<UserRole, string> = {
-  PATIENT:  '/dashboard/patient',
-  DOCTOR:   '/dashboard/doctor',
+  PATIENT: '/dashboard/patient',
+  DOCTOR: '/dashboard/doctor',
   HOSPITAL: '/dashboard/hospital',
-  ADMIN:    '/dashboard/admin',
+  ADMIN: '/dashboard/admin',
 };
 ```
 
@@ -285,11 +285,7 @@ Wrap the page content in `ProtectedRoute` and pass the required role:
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 export default function MyPage() {
-  return (
-    <ProtectedRoute requiredRole="PATIENT">
-      {/* page content */}
-    </ProtectedRoute>
-  );
+  return <ProtectedRoute requiredRole="PATIENT">{/* page content */}</ProtectedRoute>;
 }
 ```
 
@@ -372,7 +368,7 @@ function PageContent() {
   });
 
   if (isLoading) return <p>Loading…</p>;
-  if (isError)   return <p>Something went wrong.</p>;
+  if (isError) return <p>Something went wrong.</p>;
 
   return <pre>{JSON.stringify(data, null, 2)}</pre>;
 }

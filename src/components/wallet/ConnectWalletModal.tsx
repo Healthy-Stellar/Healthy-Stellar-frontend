@@ -16,12 +16,16 @@ function useFocusTrap(ref: React.RefObject<HTMLElement | null>) {
     const el = ref.current;
     if (!el) return;
 
-    const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const focusableSelector =
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
     const previouslyFocused = document.activeElement as HTMLElement | null;
 
     const focusables = () => el.querySelectorAll<HTMLElement>(focusableSelector);
     const first = () => focusables()[0];
-    const last = () => { const f = focusables(); return f[f.length - 1]; };
+    const last = () => {
+      const f = focusables();
+      return f[f.length - 1];
+    };
 
     first()?.focus();
 
@@ -64,9 +68,12 @@ export default function ConnectWalletModal({ onClose }: Props) {
 
   useFocusTrap(modalRef);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') onClose();
-  }, [onClose]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    },
+    [onClose],
+  );
 
   async function connectFreighter() {
     if (!window.freighter) {
@@ -87,7 +94,9 @@ export default function ConnectWalletModal({ onClose }: Props) {
       onClose();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
-      setError(msg.includes('rejected') ? 'Connection rejected by user.' : 'Failed to connect Freighter.');
+      setError(
+        msg.includes('rejected') ? 'Connection rejected by user.' : 'Failed to connect Freighter.',
+      );
     } finally {
       setLoading(null);
     }
@@ -107,18 +116,34 @@ export default function ConnectWalletModal({ onClose }: Props) {
       onClose();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
-      setError(msg.includes('rejected') ? 'Connection rejected by user.' : 'Failed to connect Albedo.');
+      setError(
+        msg.includes('rejected') ? 'Connection rejected by user.' : 'Failed to connect Albedo.',
+      );
     } finally {
       setLoading(null);
     }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" role="dialog" aria-modal="true" aria-labelledby="connect-wallet-title" onKeyDown={handleKeyDown}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="connect-wallet-title"
+      onKeyDown={handleKeyDown}
+    >
       <div ref={modalRef} className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 id="connect-wallet-title" className="text-lg font-semibold text-slate-900">Connect Wallet</h2>
-          <button onClick={onClose} aria-label="Close dialog" className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+          <h2 id="connect-wallet-title" className="text-lg font-semibold text-slate-900">
+            Connect Wallet
+          </h2>
+          <button
+            onClick={onClose}
+            aria-label="Close dialog"
+            className="text-slate-400 hover:text-slate-600 text-xl leading-none"
+          >
+            &times;
+          </button>
         </div>
 
         {error && (

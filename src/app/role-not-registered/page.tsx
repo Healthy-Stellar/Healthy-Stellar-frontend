@@ -27,9 +27,8 @@ export default function RoleNotRegisteredPage() {
 
       <h1 className="text-3xl font-bold text-text-1">Role Not Registered</h1>
       <p className="mt-4 text-base text-text-2 max-w-md">
-        Your wallet is connected, but no role has been assigned to it on the
-        Healthy-Stellar platform. Please contact the platform administrator to
-        have your role assigned.
+        Your wallet is connected, but no role has been assigned to it on the Healthy-Stellar
+        platform. Please contact the platform administrator to have your role assigned.
       </p>
 
       <div className="mt-8 flex flex-col sm:flex-row items-center gap-4">

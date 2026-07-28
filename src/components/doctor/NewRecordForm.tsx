@@ -7,7 +7,6 @@ import { useWalletStore } from '@/store/useWalletStore';
 import { STELLAR_CONFIG } from '@/lib/stellar';
 import { TransactionBuilder, Networks, Operation, Asset, Memo } from '@stellar/stellar-sdk';
 
-
 interface Props {
   patientAddress: string;
   onSuccess: () => void;
@@ -24,30 +23,38 @@ export default function NewRecordForm({ patientAddress, onSuccess }: Props) {
 
       // Build a minimal Stellar tx as on-chain proof
       if (window.freighter && publicKey) {
-        const server = new (await import('@stellar/stellar-sdk')).Horizon.Server(STELLAR_CONFIG.horizonUrl);
+        const server = new (await import('@stellar/stellar-sdk')).Horizon.Server(
+          STELLAR_CONFIG.horizonUrl,
+        );
         const account = await server.loadAccount(publicKey);
         const tx = new TransactionBuilder(account, {
           fee: '100',
-          networkPassphrase: STELLAR_CONFIG.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET,
+          networkPassphrase:
+            STELLAR_CONFIG.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET,
         })
-          .addOperation(Operation.payment({
-            destination: patientAddress,
-            asset: Asset.native(),
-            amount: '0.0000001',
-          }))
+          .addOperation(
+            Operation.payment({
+              destination: patientAddress,
+              asset: Asset.native(),
+              amount: '0.0000001',
+            }),
+          )
           .addMemo(Memo.text(`record:${record.id}`))
           .setTimeout(30)
           .build();
 
         const signed = await window.freighter.signTransaction(tx.toXDR(), {
-          networkPassphrase: STELLAR_CONFIG.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET,
+          networkPassphrase:
+            STELLAR_CONFIG.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET,
         });
-        const server2 = new (await import('@stellar/stellar-sdk')).Horizon.Server(STELLAR_CONFIG.horizonUrl);
+        const server2 = new (await import('@stellar/stellar-sdk')).Horizon.Server(
+          STELLAR_CONFIG.horizonUrl,
+        );
         await server2.submitTransaction(
           (await import('@stellar/stellar-sdk')).TransactionBuilder.fromXDR(
             signed,
-            STELLAR_CONFIG.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET
-          )
+            STELLAR_CONFIG.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET,
+          ),
         );
       }
 
@@ -62,7 +69,10 @@ export default function NewRecordForm({ patientAddress, onSuccess }: Props) {
 
   return (
     <form
-      onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }}
+      onSubmit={(e) => {
+        e.preventDefault();
+        mutation.mutate();
+      }}
       className="space-y-3"
     >
       <div>

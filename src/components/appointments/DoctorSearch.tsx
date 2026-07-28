@@ -42,7 +42,11 @@ export default function DoctorSearch({ onSelect }: Props) {
     };
   }, []);
 
-  const { data: doctors, isLoading, isFetching } = useQuery<Doctor[]>({
+  const {
+    data: doctors,
+    isLoading,
+    isFetching,
+  } = useQuery<Doctor[]>({
     queryKey: ['doctors', debouncedSpecialty],
     queryFn: ({ signal }) => {
       abortRef.current?.abort();
@@ -87,7 +91,9 @@ export default function DoctorSearch({ onSelect }: Props) {
       )}
 
       {!loading && doctors?.length === 0 && (
-        <p className="text-sm text-slate-400 text-center py-8">No doctors found for this specialty.</p>
+        <p className="text-sm text-slate-400 text-center py-8">
+          No doctors found for this specialty.
+        </p>
       )}
 
       {!loading && doctors && doctors.length > 0 && (

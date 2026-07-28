@@ -40,7 +40,8 @@ export default function RecordCard({ record }: Props) {
         {shareInfo && (
           <div className="mt-2 rounded-md bg-green-50 p-2 text-xs text-green-700">
             Token: <span className="font-mono break-all">{shareInfo.token}</span>
-            <br />Expires: {new Date(shareInfo.expiresAt).toLocaleString()}
+            <br />
+            Expires: {new Date(shareInfo.expiresAt).toLocaleString()}
           </div>
         )}
 
