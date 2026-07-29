@@ -1,22 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback, memo } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchDoctors } from '@/services/api.service';
 import { Doctor } from '@/types';
 import { Loader2 } from 'lucide-react';
-
-const DoctorResultCard = memo(function DoctorResultCard({ doc, onSelect }: { doc: Doctor; onSelect: (doctor: Doctor) => void }) {
-  return (
-    <button
-      onClick={() => onSelect(doc)}
-      className="text-left rounded-xl border border-border bg-surface-card p-4 hover:border-green hover:shadow-card transition-all"
-    >
-      <p className="font-semibold text-text-1">{doc.name}</p>
-      <p className="text-xs text-text-2">{doc.specialty}</p>
-    </button>
-  );
-});
+import DoctorCard from '@/components/doctor/DoctorCard';
 
 const SPECIALTIES = ['All', 'General', 'Cardiology', 'Dermatology', 'Neurology', 'Pediatrics'];
 const DEBOUNCE_MS = 300;
@@ -111,7 +100,7 @@ export default function DoctorSearch({ onSelect }: Props) {
       {!loading && doctors && doctors.length > 0 && (
         <div className="grid gap-3 sm:grid-cols-2">
           {doctors.map((doc) => (
-            <DoctorResultCard key={doc.id} doc={doc} onSelect={onSelect} />
+            <DoctorCard key={doc.id} doctor={doc} onSelect={onSelect} />
           ))}
         </div>
       )}
