@@ -1,10 +1,41 @@
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 import { MedicalRecord, ShareToken, Doctor, TimeSlot, Appointment, NewRecordPayload, EncryptedRecord, StaffMember, PatientAdmission, HospitalMetrics, ComplianceReport, BulkRecordImportRow, BulkImportResponse } from '@/types';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? '',
   headers: { 'Content-Type': 'application/json' },
 });
+
+// Implement retry-with-backoff for transient network failures
+axiosRetry(api, {
+  retries: 3,
+  retryDelay: axiosRetry.exponentialDelay,
+  retryCondition: (error) => {
+    return axiosRetry.isNetworkOrIdempotentRequestError(error) || (error.response ? error.response.status >= 500 : false);
+  },
+});
+
+export interface ApiError {
+  message: string;
+  status: number;
+  code: string;
+  data: unknown;
+}
+
+// Normalize error responses into a consistent shape
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const normalizedError: ApiError = {
+      message: error.response?.data?.message || error.message || 'An unexpected error occurred',
+      status: error.response?.status || 500,
+      code: error.code || 'UNKNOWN_ERROR',
+      data: error.response?.data || null,
+    };
+    return Promise.reject(normalizedError);
+  }
+);
 
 export interface PaginatedResponse<T> {
   data: T[];
