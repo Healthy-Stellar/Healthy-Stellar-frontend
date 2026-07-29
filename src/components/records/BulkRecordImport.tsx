@@ -26,7 +26,9 @@ export default function BulkRecordImport({ patientAddress, onComplete }: Props) 
   const mutation = useMutation({
     mutationFn: async () => {
       if (!preview) throw new Error('No records to import');
-      const validRecords = preview.filter((r) => r._valid).map(({ _row, _valid, _errors, ...r }) => r);
+      const validRecords = preview
+        .filter((r) => r._valid)
+        .map(({ _row, _valid, _errors, ...r }) => r);
       if (validRecords.length === 0) throw new Error('No valid records to import.');
       return bulkImportRecords(patientAddress, validRecords);
     },
@@ -69,7 +71,7 @@ export default function BulkRecordImport({ patientAddress, onComplete }: Props) 
         setFileName('');
       }
     },
-    [toast]
+    [toast],
   );
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -88,12 +90,13 @@ export default function BulkRecordImport({ patientAddress, onComplete }: Props) 
   const errorCount = preview ? preview.length - validCount : 0;
   const busy = mutation.isPending;
 
-
   return (
     <div className="rounded-xl border-2 border-dashed border-slate-200 bg-white p-6">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-             style={{ background: 'rgba(0,200,150,0.1)', border: '1px solid rgba(0,200,150,0.2)' }}>
+        <div
+          className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+          style={{ background: 'rgba(0,200,150,0.1)', border: '1px solid rgba(0,200,150,0.2)' }}
+        >
           <Upload className="w-4 h-4" style={{ color: '#00C896' }} />
         </div>
         <div>
@@ -144,7 +147,11 @@ export default function BulkRecordImport({ patientAddress, onComplete }: Props) 
                 <span className="text-red-500 text-xs">({errorCount} with errors)</span>
               )}
             </div>
-            <button onClick={clearPreview} className="p-1 rounded hover:bg-slate-200 transition-colors" aria-label="Clear file">
+            <button
+              onClick={clearPreview}
+              className="p-1 rounded hover:bg-slate-200 transition-colors"
+              aria-label="Clear file"
+            >
               <X className="w-4 h-4 text-slate-400" />
             </button>
           </div>
@@ -153,13 +160,18 @@ export default function BulkRecordImport({ patientAddress, onComplete }: Props) 
             <div className="rounded-lg bg-red-50 border border-red-200 p-3">
               <p className="text-xs font-medium text-red-700 mb-1">Field mapping errors:</p>
               <ul className="space-y-0.5">
-                {preview.filter((r) => !r._valid).slice(0, 5).map((r) => (
-                  <li key={r._row} className="text-xs text-red-600">
-                    Row {r._row}: {r._errors.join(', ')}
-                  </li>
-                ))}
+                {preview
+                  .filter((r) => !r._valid)
+                  .slice(0, 5)
+                  .map((r) => (
+                    <li key={r._row} className="text-xs text-red-600">
+                      Row {r._row}: {r._errors.join(', ')}
+                    </li>
+                  ))}
                 {errorCount > 5 && (
-                  <li className="text-xs text-red-500">…and {errorCount - 5} more rows with errors</li>
+                  <li className="text-xs text-red-500">
+                    …and {errorCount - 5} more rows with errors
+                  </li>
                 )}
               </ul>
             </div>
@@ -182,7 +194,9 @@ export default function BulkRecordImport({ patientAddress, onComplete }: Props) 
                     <td className="px-3 py-2 text-slate-400">{row._row}</td>
                     <td className="px-3 py-2 text-slate-700">{row.date || '—'}</td>
                     <td className="px-3 py-2 text-slate-700">{row.doctorName || '—'}</td>
-                    <td className="px-3 py-2 text-slate-700 max-w-[200px] truncate">{row.diagnosis || '—'}</td>
+                    <td className="px-3 py-2 text-slate-700 max-w-[200px] truncate">
+                      {row.diagnosis || '—'}
+                    </td>
                     <td className="px-3 py-2">
                       {row._valid ? (
                         <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />

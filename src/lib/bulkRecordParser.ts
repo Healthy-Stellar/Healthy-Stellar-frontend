@@ -2,11 +2,14 @@ import type { BulkRecordImportRow } from '@/types';
 
 export function parseCSV(text: string): BulkRecordImportRow[] {
   const lines = text.split(/\r?\n/).filter((l) => l.trim());
-  if (lines.length < 2) throw new Error('CSV file must have a header row and at least one data row.');
+  if (lines.length < 2)
+    throw new Error('CSV file must have a header row and at least one data row.');
 
   const headers = lines[0].split(',').map((h) => h.trim().toLowerCase());
   const dateIdx = headers.findIndex((h) => h === 'date');
-  const doctorIdx = headers.findIndex((h) => h === 'doctorname' || h === 'doctor' || h === 'doctor_name');
+  const doctorIdx = headers.findIndex(
+    (h) => h === 'doctorname' || h === 'doctor' || h === 'doctor_name',
+  );
   const diagnosisIdx = headers.findIndex((h) => h === 'diagnosis');
   const prescriptionIdx = headers.findIndex((h) => h === 'prescription');
   const notesIdx = headers.findIndex((h) => h === 'notes');
@@ -14,7 +17,7 @@ export function parseCSV(text: string): BulkRecordImportRow[] {
   if (dateIdx === -1 || doctorIdx === -1 || diagnosisIdx === -1) {
     throw new Error(
       'CSV must contain at least "date", "doctorName", and "diagnosis" columns. Found: ' +
-        headers.join(', ')
+        headers.join(', '),
     );
   }
 
@@ -40,14 +43,18 @@ export function parseFHIR(json: Record<string, unknown>): BulkRecordImportRow[] 
 
   return entries.map((entry) => {
     const resource = entry.resource as Record<string, unknown> | undefined;
-    const codeText =
-      ((resource?.code as Record<string, unknown>)?.coding as Array<Record<string, unknown>>)?.[0]
-        ?.display as string | undefined;
+    const codeText = (
+      (resource?.code as Record<string, unknown>)?.coding as Array<Record<string, unknown>>
+    )?.[0]?.display as string | undefined;
 
     return {
       date: (resource?.date as string) || '',
-      doctorName: (resource?.performer as Array<Record<string, unknown>>)?.[0]?.display as string || '',
-      diagnosis: codeText || ((resource?.reasonCode as Array<Record<string, unknown>>)?.[0]?.text as string) || '',
+      doctorName:
+        ((resource?.performer as Array<Record<string, unknown>>)?.[0]?.display as string) || '',
+      diagnosis:
+        codeText ||
+        ((resource?.reasonCode as Array<Record<string, unknown>>)?.[0]?.text as string) ||
+        '',
       notes: (resource?.note?.[0]?.text as string) || undefined,
     };
   });

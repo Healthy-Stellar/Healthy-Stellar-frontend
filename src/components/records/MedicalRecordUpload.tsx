@@ -76,7 +76,9 @@ export default function MedicalRecordUpload({ patientAddress, onUploaded }: Prop
     <div className="rounded-xl border-2 border-dashed border-border bg-surface-card p-6 text-center">
       <p className="text-3xl mb-2">🔒</p>
       <p className="font-medium text-text-1">Upload Encrypted Medical Record</p>
-      <p className="text-xs text-text-3 mt-1">PDF, JPEG or PNG · max 10 MB · encrypted before upload</p>
+      <p className="text-xs text-text-3 mt-1">
+        PDF, JPEG or PNG · max 10 MB · encrypted before upload
+      </p>
 
       {progress !== 'idle' && (
         <p className="mt-3 text-sm text-green animate-pulse">

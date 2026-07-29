@@ -21,11 +21,11 @@ Thank you for your interest in contributing! This guide will help you get your l
 
 Before you begin, make sure you have the following installed and configured:
 
-| Requirement | Version / Notes |
-|---|---|
-| **Node.js** | v18 or later (LTS recommended) |
-| **npm** | v9 or later (bundled with Node.js) |
-| **Git** | Any recent version |
+| Requirement                     | Version / Notes                                                                                                 |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Node.js**                     | v18 or later (LTS recommended)                                                                                  |
+| **npm**                         | v9 or later (bundled with Node.js)                                                                              |
+| **Git**                         | Any recent version                                                                                              |
 | **Freighter browser extension** | Install from [freighter.app](https://www.freighter.app/) — required to sign Stellar transactions in the browser |
 
 ### Stellar Testnet Account
@@ -67,14 +67,14 @@ The app will be available at `http://localhost:3000`.
 
 Always branch off from `main`. Use the following prefixes:
 
-| Prefix | When to use |
-|---|---|
-| `feat/` | New feature or enhancement |
-| `fix/` | Bug fix |
-| `docs/` | Documentation only changes |
-| `chore/` | Tooling, config, dependency updates |
+| Prefix      | When to use                                 |
+| ----------- | ------------------------------------------- |
+| `feat/`     | New feature or enhancement                  |
+| `fix/`      | Bug fix                                     |
+| `docs/`     | Documentation only changes                  |
+| `chore/`    | Tooling, config, dependency updates         |
 | `refactor/` | Code restructuring without behaviour change |
-| `test/` | Adding or updating tests |
+| `test/`     | Adding or updating tests                    |
 
 **Format:** `<prefix>/<issue-number>-short-description`
 
@@ -104,15 +104,15 @@ Closes #<issue-number>
 
 **Types:**
 
-| Type | When to use |
-|---|---|
-| `feat` | Introduces a new feature |
-| `fix` | Fixes a bug |
-| `docs` | Documentation changes only |
-| `style` | Formatting, whitespace (no logic change) |
+| Type       | When to use                                     |
+| ---------- | ----------------------------------------------- |
+| `feat`     | Introduces a new feature                        |
+| `fix`      | Fixes a bug                                     |
+| `docs`     | Documentation changes only                      |
+| `style`    | Formatting, whitespace (no logic change)        |
 | `refactor` | Code change that is neither a fix nor a feature |
-| `test` | Adding or correcting tests |
-| `chore` | Build process, tooling, dependency updates |
+| `test`     | Adding or correcting tests                      |
+| `chore`    | Build process, tooling, dependency updates      |
 
 **Examples:**
 
@@ -129,6 +129,7 @@ docs(contributing): add testnet setup instructions
 ## Pull Request Process
 
 1. **Sync your fork** before starting work:
+
    ```bash
    git fetch upstream
    git rebase upstream/main
@@ -168,14 +169,14 @@ npm run format
 
 ### Naming Conventions
 
-| Entity | Convention | Example |
-|---|---|---|
-| React components | PascalCase | `RecordCard.tsx` |
-| Hooks | camelCase, `use` prefix | `useRoleRedirect.ts` |
-| Zustand stores | camelCase, `use` prefix | `useWalletStore.ts` |
-| Utility functions | camelCase | `truncateAddress` |
-| Types / Interfaces | PascalCase | `UserRole`, `MedicalRecord` |
-| Environment variables | `NEXT_PUBLIC_` prefix for client-side | `NEXT_PUBLIC_API_URL` |
+| Entity                | Convention                            | Example                     |
+| --------------------- | ------------------------------------- | --------------------------- |
+| React components      | PascalCase                            | `RecordCard.tsx`            |
+| Hooks                 | camelCase, `use` prefix               | `useRoleRedirect.ts`        |
+| Zustand stores        | camelCase, `use` prefix               | `useWalletStore.ts`         |
+| Utility functions     | camelCase                             | `truncateAddress`           |
+| Types / Interfaces    | PascalCase                            | `UserRole`, `MedicalRecord` |
+| Environment variables | `NEXT_PUBLIC_` prefix for client-side | `NEXT_PUBLIC_API_URL`       |
 
 ### Component Structure
 

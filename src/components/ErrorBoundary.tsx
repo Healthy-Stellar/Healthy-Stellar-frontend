@@ -30,7 +30,8 @@ export class ErrorBoundary extends Component<Props, State> {
           <p className="text-5xl">⚠️</p>
           <h1 className="text-xl font-semibold text-text-1">Something went wrong</h1>
           <p className="text-sm text-text-2 max-w-md">
-            An unexpected error occurred. Please refresh the page or contact support if the problem persists.
+            An unexpected error occurred. Please refresh the page or contact support if the problem
+            persists.
           </p>
           <button
             onClick={() => this.setState({ hasError: false, error: null })}

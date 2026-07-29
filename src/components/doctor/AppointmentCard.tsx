@@ -19,7 +19,7 @@ const STATUS_COLORS: Record<Appointment['status'], string> = {
   cancelled: 'bg-red-100 text-red-700',
 };
 
-export default function AppointmentCard({ appointment: rawAppointment }: Props) {
+function AppointmentCard({ appointment: rawAppointment }: Props) {
   const appointment = withVideoRoom(rawAppointment);
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState(false);
@@ -44,12 +44,16 @@ export default function AppointmentCard({ appointment: rawAppointment }: Props) 
         onClick={() => setExpanded((v) => !v)}
       >
         <div>
-          <p className="font-semibold text-text-1">{appointment.patientName ?? appointment.patientAddress.slice(0, 8) + '…'}</p>
+          <p className="font-semibold text-text-1">
+            {appointment.patientName ?? appointment.patientAddress.slice(0, 8) + '…'}
+          </p>
           <p className="text-xs text-text-2">
             {new Date(appointment.datetime).toLocaleString()} · {appointment.type}
           </p>
         </div>
-        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[appointment.status]}`}>
+        <span
+          className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[appointment.status]}`}
+        >
           {appointment.status}
         </span>
       </div>
@@ -91,7 +95,9 @@ export default function AppointmentCard({ appointment: rawAppointment }: Props) 
           <div>
             <p className="text-xs font-medium text-text-2 mb-2">Patient History</p>
             {!patientRecords && <p className="text-xs text-text-3">Loading…</p>}
-            {patientRecords?.length === 0 && <p className="text-xs text-text-3">No records found.</p>}
+            {patientRecords?.length === 0 && (
+              <p className="text-xs text-text-3">No records found.</p>
+            )}
             {patientRecords && patientRecords.length > 0 && (
               <ul className="space-y-1">
                 {patientRecords.map((r) => (
@@ -134,3 +140,5 @@ export default function AppointmentCard({ appointment: rawAppointment }: Props) 
     </div>
   );
 }
+
+export default memo(AppointmentCard);

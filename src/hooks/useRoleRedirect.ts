@@ -15,10 +15,7 @@ export const ROLE_DASHBOARD_MAP: Record<UserRole, string> = {
  * Redirects an authenticated user to their role-specific dashboard.
  * If no role is assigned, redirects to /role-not-registered.
  */
-export function useRoleRedirect(
-  walletAddress: string | null,
-  role: UserRole | null
-) {
+export function useRoleRedirect(walletAddress: string | null, role: UserRole | null) {
   const router = useRouter();
 
   useEffect(() => {

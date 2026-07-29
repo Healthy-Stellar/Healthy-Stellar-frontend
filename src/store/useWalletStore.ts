@@ -19,6 +19,6 @@ export const useWalletStore = create<WalletState>()(
       setWallet: (publicKey, role) => set({ publicKey, role }),
       disconnect: () => set({ publicKey: null, role: null }),
     }),
-    { name: 'wallet-store' }
-  )
+    { name: 'wallet-store' },
+  ),
 );
