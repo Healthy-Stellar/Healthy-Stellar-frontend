@@ -19,7 +19,8 @@ import api, {
   bulkImportRecords,
 } from '@/services/api.service';
 
-const mockUseInterceptor = jest.fn();
+var mockInterceptorFulfilled: (res: any) => any;
+var mockInterceptorRejected: (err: any) => Promise<any>;
 
 jest.mock('axios', () => {
   const mockApi = {
@@ -28,7 +29,10 @@ jest.mock('axios', () => {
     patch: jest.fn(),
     interceptors: {
       response: {
-        use: mockUseInterceptor,
+        use: jest.fn((fulfilled, rejected) => {
+          mockInterceptorFulfilled = fulfilled;
+          mockInterceptorRejected = rejected;
+        }),
       },
     },
   };
@@ -260,11 +264,9 @@ describe('api.service unit tests', () => {
 
   describe('Response Interceptor & Error Normalization', () => {
     it('normalizes response errors into standard ApiError shape', async () => {
-      const [onFulfilled, onRejected] = mockUseInterceptor.mock.calls[0];
-
       // Test fulfilled handler
       const mockSuccessResponse = { data: { success: true } };
-      expect(onFulfilled(mockSuccessResponse)).toBe(mockSuccessResponse);
+      expect(mockInterceptorFulfilled(mockSuccessResponse)).toBe(mockSuccessResponse);
 
       // Test error handler with server error payload
       const serverError = {
@@ -275,7 +277,7 @@ describe('api.service unit tests', () => {
         code: 'ERR_NOT_FOUND',
       };
 
-      await expect(onRejected(serverError)).rejects.toEqual({
+      await expect(mockInterceptorRejected(serverError)).rejects.toEqual({
         message: 'Patient not found',
         status: 404,
         code: 'ERR_NOT_FOUND',
@@ -287,7 +289,7 @@ describe('api.service unit tests', () => {
         message: 'Network Failure',
       };
 
-      await expect(onRejected(genericError)).rejects.toEqual({
+      await expect(mockInterceptorRejected(genericError)).rejects.toEqual({
         message: 'Network Failure',
         status: 500,
         code: 'UNKNOWN_ERROR',
