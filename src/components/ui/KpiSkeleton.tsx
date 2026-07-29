@@ -14,27 +14,12 @@ export function KpiSkeleton({ count = 4 }: { count?: number }) {
           style={{ background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.07)' }}
         >
           <div className="flex items-start justify-between mb-4">
-            <div
-              className="w-8 h-8 rounded-[9px]"
-              style={{ background: 'var(--bg-inset)' }}
-            />
-            <div
-              className="w-14 h-7 rounded"
-              style={{ background: 'var(--bg-inset)' }}
-            />
+            <div className="w-8 h-8 rounded-[9px]" style={{ background: 'var(--bg-inset)' }} />
+            <div className="w-14 h-7 rounded" style={{ background: 'var(--bg-inset)' }} />
           </div>
-          <div
-            className="h-8 w-16 rounded mb-1"
-            style={{ background: 'var(--bg-inset)' }}
-          />
-          <div
-            className="h-3 w-24 rounded"
-            style={{ background: 'var(--bg-inset)' }}
-          />
-          <div
-            className="h-3 w-20 rounded mt-2"
-            style={{ background: 'var(--bg-inset)' }}
-          />
+          <div className="h-8 w-16 rounded mb-1" style={{ background: 'var(--bg-inset)' }} />
+          <div className="h-3 w-24 rounded" style={{ background: 'var(--bg-inset)' }} />
+          <div className="h-3 w-20 rounded mt-2" style={{ background: 'var(--bg-inset)' }} />
         </div>
       ))}
     </div>

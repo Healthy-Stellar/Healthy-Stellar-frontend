@@ -7,8 +7,5 @@ Sentry.init({
   replaysOnErrorSampleRate: 1.0,
   environment: process.env.NODE_ENV,
   enabled: process.env.NODE_ENV === 'production',
-  integrations: [
-    Sentry.replayIntegration(),
-    Sentry.browserTracingIntegration(),
-  ],
+  integrations: [Sentry.replayIntegration(), Sentry.browserTracingIntegration()],
 });

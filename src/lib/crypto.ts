@@ -9,20 +9,15 @@ export async function encryptFile(file: File): Promise<{
   iv: Uint8Array;
   key: CryptoKey;
 }> {
-  const key = await crypto.subtle.generateKey(
-    { name: 'AES-GCM', length: 256 },
-    true,
-    ['encrypt', 'decrypt'],
-  );
+  const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, [
+    'encrypt',
+    'decrypt',
+  ]);
 
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const fileBuffer = await file.arrayBuffer();
 
-  const encryptedBuffer = await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv },
-    key,
-    fileBuffer,
-  );
+  const encryptedBuffer = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, fileBuffer);
 
   return { encryptedBuffer, iv, key };
 }
