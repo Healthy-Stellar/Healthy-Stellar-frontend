@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Contributing Guide
+    url: https://github.com/Healthy-Stellar/Healthy-Stellar-frontend/blob/main/CONTRIBUTING.md
+    about: Please read our contributing guidelines before opening an issue or PR.
