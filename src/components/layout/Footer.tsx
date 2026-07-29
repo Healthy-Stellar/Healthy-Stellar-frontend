@@ -21,43 +21,49 @@ const cols = [
   {
     title: 'Product',
     links: [
-      { label: 'Features',     href: '/#features' },
+      { label: 'Features', href: '/#features' },
       { label: 'How It Works', href: '/#how-it-works' },
-      { label: 'Network',      href: '/#stats' },
-      { label: 'Security',     href: '/security' },
+      { label: 'Network', href: '/#stats' },
+      { label: 'Security', href: '/security' },
     ],
   },
   {
     title: 'Developers',
     links: [
-      { label: 'Documentation',    href: '/docs' },
-      { label: 'API Reference',    href: '/docs/api' },
-      { label: 'Smart Contracts',  href: '/docs/contracts' },
-      { label: 'GitHub',           href: 'https://github.com' },
+      { label: 'Documentation', href: '/docs' },
+      { label: 'API Reference', href: '/docs/api' },
+      { label: 'Smart Contracts', href: '/docs/contracts' },
+      { label: 'GitHub', href: 'https://github.com' },
     ],
   },
   {
     title: 'Company',
     links: [
-      { label: 'About',          href: '/about' },
-      { label: 'Blog',           href: '/blog' },
+      { label: 'About', href: '/about' },
+      { label: 'Blog', href: '/blog' },
       { label: 'Privacy Policy', href: '/privacy' },
-      { label: 'Terms',          href: '/terms' },
+      { label: 'Terms', href: '/terms' },
     ],
   },
 ];
 
 export default function Footer() {
   return (
-    <footer style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: 'var(--bg-raised)' }}>
+    <footer
+      style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: 'var(--bg-raised)' }}
+    >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-14">
-
           {/* Brand */}
           <div>
             <Link href="/" className="inline-flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-[9px] flex items-center justify-center"
-                   style={{ background: 'rgba(0,200,150,0.1)', border: '1px solid rgba(0,200,150,0.2)' }}>
+              <div
+                className="w-8 h-8 rounded-[9px] flex items-center justify-center"
+                style={{
+                  background: 'rgba(0,200,150,0.1)',
+                  border: '1px solid rgba(0,200,150,0.2)',
+                }}
+              >
                 <Activity className="w-4 h-4" style={{ color: '#00C896' }} />
               </div>
               <span className="font-bold text-text-1">
@@ -69,12 +75,20 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-2 mt-5">
               {[
-                { icon: GithubIcon,  href: 'https://github.com' },
+                { icon: GithubIcon, href: 'https://github.com' },
                 { icon: TwitterIcon, href: 'https://twitter.com' },
               ].map(({ icon: Icon, href }) => (
-                <a key={href} href={href} target="_blank" rel="noopener noreferrer"
-                   className="w-8 h-8 rounded-lg flex items-center justify-center text-text-3 hover:text-text-1 transition-colors"
-                   style={{ background: 'var(--bg-inset)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <a
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-text-3 hover:text-text-1 transition-colors"
+                  style={{
+                    background: 'var(--bg-inset)',
+                    border: '1px solid rgba(255,255,255,0.07)',
+                  }}
+                >
                   <Icon className="w-3.5 h-3.5" />
                 </a>
               ))}
@@ -82,14 +96,18 @@ export default function Footer() {
           </div>
 
           {/* Link columns */}
-          {cols.map(col => (
+          {cols.map((col) => (
             <div key={col.title}>
-              <p className="text-text-1 text-xs font-semibold tracking-wide uppercase mb-4">{col.title}</p>
+              <p className="text-text-1 text-xs font-semibold tracking-wide uppercase mb-4">
+                {col.title}
+              </p>
               <ul className="space-y-2.5">
-                {col.links.map(link => (
+                {col.links.map((link) => (
                   <li key={link.label}>
-                    <Link href={link.href}
-                          className="text-sm text-text-2 hover:text-text-1 transition-colors duration-150">
+                    <Link
+                      href={link.href}
+                      className="text-sm text-text-2 hover:text-text-1 transition-colors duration-150"
+                    >
                       {link.label}
                     </Link>
                   </li>
@@ -100,9 +118,13 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3"
-             style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-          <p className="text-text-3 text-xs">© {new Date().getFullYear()} HealthyStellar. All rights reserved.</p>
+        <div
+          className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+        >
+          <p className="text-text-3 text-xs">
+            © {new Date().getFullYear()} HealthyStellar. All rights reserved.
+          </p>
           <div className="flex items-center gap-1.5 text-xs text-text-3">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse-dot" />
             Stellar Testnet — 3s finality

@@ -47,7 +47,10 @@ export default function SlotPicker({ doctorId, selected, onSelect }: Props) {
                     : 'border-border text-text-1 hover:bg-surface-hover'
                 }`}
               >
-                {new Date(slot.datetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {new Date(slot.datetime).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
               </button>
             ))}
           </div>

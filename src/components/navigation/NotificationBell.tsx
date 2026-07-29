@@ -12,9 +12,9 @@ export default function NotificationBell() {
 
   const handleNotification = (event: NotificationEvent) => {
     const typeToKind = {
-      access_request:        'info',
+      access_request: 'info',
       appointment_confirmed: 'success',
-      record_shared:         'info',
+      record_shared: 'info',
     } as const;
     toast(event.message, typeToKind[event.type] ?? 'info');
   };
@@ -32,8 +32,10 @@ export default function NotificationBell() {
     >
       <Bell className="w-4 h-4" />
       {unreadCount > 0 && (
-        <span className="absolute -top-1 -right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full text-[10px] font-bold text-white px-0.5"
-              style={{ background: '#EF4444' }}>
+        <span
+          className="absolute -top-1 -right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full text-[10px] font-bold text-white px-0.5"
+          style={{ background: '#EF4444' }}
+        >
           {unreadCount > 9 ? '9+' : unreadCount}
         </span>
       )}

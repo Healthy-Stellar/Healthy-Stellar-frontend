@@ -19,7 +19,9 @@ export default function Navbar() {
     <>
       <nav className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/80 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-          <Link href="/" className="font-bold text-green text-lg">HealthyStella</Link>
+          <Link href="/" className="font-bold text-green text-lg">
+            HealthyStella
+          </Link>
 
           <div className="flex items-center gap-3">
             {publicKey ? (
@@ -30,10 +32,7 @@ export default function Navbar() {
                 <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-mono text-slate-700">
                   {truncate(publicKey)}
                 </span>
-                <button
-                  onClick={disconnect}
-                  className="text-sm text-red-500 hover:text-red-700"
-                >
+                <button onClick={disconnect} className="text-sm text-red-500 hover:text-red-700">
                   Disconnect
                 </button>
               </>
