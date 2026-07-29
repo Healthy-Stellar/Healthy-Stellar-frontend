@@ -5,7 +5,7 @@ export function parseCSV(text: string): BulkRecordImportRow[] {
   if (lines.length < 2)
     throw new Error('CSV file must have a header row and at least one data row.');
 
-  const headers = lines[0].split(',').map((h) => h.trim().toLowerCase());
+  const headers = lines[0]!.split(',').map((h) => h.trim().toLowerCase());
   const dateIdx = headers.findIndex((h) => h === 'date');
   const doctorIdx = headers.findIndex(
     (h) => h === 'doctorname' || h === 'doctor' || h === 'doctor_name',
@@ -23,14 +23,19 @@ export function parseCSV(text: string): BulkRecordImportRow[] {
 
   const records: BulkRecordImportRow[] = [];
   for (let i = 1; i < lines.length; i++) {
-    const cols = lines[i].split(',').map((c) => c.trim());
-    records.push({
+    const cols = lines[i]!.split(',').map((c) => c.trim());
+    const row: BulkRecordImportRow = {
       date: cols[dateIdx] || '',
       doctorName: cols[doctorIdx] || '',
       diagnosis: cols[diagnosisIdx] || '',
-      prescription: prescriptionIdx >= 0 ? cols[prescriptionIdx] || '' : undefined,
-      notes: notesIdx >= 0 ? cols[notesIdx] || '' : undefined,
-    });
+    };
+    if (prescriptionIdx >= 0 && cols[prescriptionIdx]) {
+      row.prescription = cols[prescriptionIdx];
+    }
+    if (notesIdx >= 0 && cols[notesIdx]) {
+      row.notes = cols[notesIdx];
+    }
+    records.push(row);
   }
   return records;
 }
@@ -42,21 +47,27 @@ export function parseFHIR(json: Record<string, unknown>): BulkRecordImportRow[] 
   }
 
   return entries.map((entry) => {
-    const resource = entry.resource as Record<string, unknown> | undefined;
+    const resource = (entry.resource ?? {}) as Record<string, unknown>;
     const codeText = (
-      (resource?.code as Record<string, unknown>)?.coding as Array<Record<string, unknown>>
+      (resource.code as Record<string, unknown> | undefined)?.coding as Array<Record<string, unknown>> | undefined
     )?.[0]?.display as string | undefined;
 
-    return {
-      date: (resource?.date as string) || '',
+    const row: BulkRecordImportRow = {
+      date: (resource.date as string) || '',
       doctorName:
-        ((resource?.performer as Array<Record<string, unknown>>)?.[0]?.display as string) || '',
+        ((resource.performer as Array<Record<string, unknown>> | undefined)?.[0]?.display as string) || '',
       diagnosis:
         codeText ||
-        ((resource?.reasonCode as Array<Record<string, unknown>>)?.[0]?.text as string) ||
+        ((resource.reasonCode as Array<Record<string, unknown>> | undefined)?.[0]?.text as string) ||
         '',
-      notes: (resource?.note?.[0]?.text as string) || undefined,
     };
+
+    const notesList = resource.note as Array<Record<string, unknown>> | undefined;
+    if (notesList?.[0]?.text) {
+      row.notes = notesList[0].text as string;
+    }
+
+    return row;
   });
 }
 

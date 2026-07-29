@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchRecordsPaginated } from '@/services/api.service';
