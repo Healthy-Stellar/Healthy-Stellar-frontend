@@ -11,7 +11,7 @@ interface Props {
 
 type WalletOption = 'freighter' | 'albedo';
 
-function useFocusTrap(ref: React.RefObject<HTMLElement | null>) {
+function useFocusTrap(ref: React.RefObject<HTMLElement | null>, onClose: () => void) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -28,6 +28,7 @@ function useFocusTrap(ref: React.RefObject<HTMLElement | null>) {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
         e.preventDefault();
+        onClose();
         return;
       }
       if (e.key !== 'Tab') return;
@@ -53,7 +54,7 @@ function useFocusTrap(ref: React.RefObject<HTMLElement | null>) {
       el.removeEventListener('keydown', handleKeyDown);
       previouslyFocused?.focus();
     };
-  }, [ref]);
+  }, [ref, onClose]);
 }
 
 export default function ConnectWalletModal({ onClose }: Props) {
@@ -62,7 +63,7 @@ export default function ConnectWalletModal({ onClose }: Props) {
   const [loading, setLoading] = useState<WalletOption | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  useFocusTrap(modalRef);
+  useFocusTrap(modalRef, onClose);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Escape') onClose();
