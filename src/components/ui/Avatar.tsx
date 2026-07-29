@@ -12,7 +12,14 @@ interface AvatarProps {
   priority?: boolean;
 }
 
-export function Avatar({ src, alt, initials, size = 28, className = '', priority = false }: AvatarProps) {
+export function Avatar({
+  src,
+  alt,
+  initials,
+  size = 28,
+  className = '',
+  priority = false,
+}: AvatarProps) {
   const [imgError, setImgError] = useState(false);
 
   if (src && !imgError) {

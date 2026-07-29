@@ -14,7 +14,6 @@ import { withVideoRoom } from '@/lib/video';
 import { Doctor, TimeSlot, Appointment } from '@/types';
 import { TransactionBuilder, Networks, Operation, Asset } from '@stellar/stellar-sdk';
 
-
 type Step = 'search' | 'slots' | 'form' | 'confirmed';
 
 function BookingFlow() {
@@ -22,7 +21,11 @@ function BookingFlow() {
   const [step, setStep] = useState<Step>('search');
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [slot, setSlot] = useState<TimeSlot | null>(null);
-  const [form, setForm] = useState({ type: 'in-person' as 'in-person' | 'telemedicine', notes: '', paymentMethod: 'stellar' as 'stellar' | 'traditional' });
+  const [form, setForm] = useState({
+    type: 'in-person' as 'in-person' | 'telemedicine',
+    notes: '',
+    paymentMethod: 'stellar' as 'stellar' | 'traditional',
+  });
   const [confirmed, setConfirmed] = useState<Appointment | null>(null);
 
   // Validation state
@@ -39,29 +42,37 @@ function BookingFlow() {
       if (!doctor || !slot || !publicKey) throw new Error('Missing data');
 
       if (form.paymentMethod === 'stellar' && window.freighter) {
-        const server = new (await import('@stellar/stellar-sdk')).Horizon.Server(STELLAR_CONFIG.horizonUrl);
+        const server = new (await import('@stellar/stellar-sdk')).Horizon.Server(
+          STELLAR_CONFIG.horizonUrl,
+        );
         const account = await server.loadAccount(publicKey);
         const tx = new TransactionBuilder(account, {
           fee: '100',
-          networkPassphrase: STELLAR_CONFIG.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET,
+          networkPassphrase:
+            STELLAR_CONFIG.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET,
         })
-          .addOperation(Operation.payment({
-            destination: doctor.address,
-            asset: Asset.native(),
-            amount: String(FEE),
-          }))
+          .addOperation(
+            Operation.payment({
+              destination: doctor.address,
+              asset: Asset.native(),
+              amount: String(FEE),
+            }),
+          )
           .setTimeout(30)
           .build();
 
         const signed = await window.freighter.signTransaction(tx.toXDR(), {
-          networkPassphrase: STELLAR_CONFIG.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET,
+          networkPassphrase:
+            STELLAR_CONFIG.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET,
         });
-        const server2 = new (await import('@stellar/stellar-sdk')).Horizon.Server(STELLAR_CONFIG.horizonUrl);
+        const server2 = new (await import('@stellar/stellar-sdk')).Horizon.Server(
+          STELLAR_CONFIG.horizonUrl,
+        );
         await server2.submitTransaction(
           (await import('@stellar/stellar-sdk')).TransactionBuilder.fromXDR(
             signed,
-            STELLAR_CONFIG.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET
-          )
+            STELLAR_CONFIG.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET,
+          ),
         );
       }
 
@@ -110,7 +121,10 @@ function BookingFlow() {
       {/* Step indicator */}
       <div className="flex items-center gap-2 text-xs text-slate-400">
         {(['search', 'slots', 'form'] as Step[]).map((s, i) => (
-          <span key={s} className={`flex items-center gap-1 ${step === s ? 'text-green font-medium' : ''}`}>
+          <span
+            key={s}
+            className={`flex items-center gap-1 ${step === s ? 'text-green font-medium' : ''}`}
+          >
             {i > 0 && <span>›</span>}
             {s === 'search' ? 'Find Doctor' : s === 'slots' ? 'Pick Slot' : 'Book & Pay'}
           </span>
@@ -118,7 +132,12 @@ function BookingFlow() {
       </div>
 
       {step === 'search' && (
-        <DoctorSearch onSelect={(d) => { setDoctor(d); setStep('slots'); }} />
+        <DoctorSearch
+          onSelect={(d) => {
+            setDoctor(d);
+            setStep('slots');
+          }}
+        />
       )}
 
       {step === 'slots' && doctor && (
@@ -145,7 +164,12 @@ function BookingFlow() {
 
       {step === 'form' && doctor && slot && (
         <div>
-          <button onClick={() => setStep('slots')} className="text-xs text-slate-400 hover:text-slate-600 mb-3">← Back</button>
+          <button
+            onClick={() => setStep('slots')}
+            className="text-xs text-slate-400 hover:text-slate-600 mb-3"
+          >
+            ← Back
+          </button>
           <div className="space-y-4">
             {/* Doctor field — read-only, shown as confirmation */}
             <div>
@@ -174,7 +198,9 @@ function BookingFlow() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Appointment Type</label>
+              <label className="block text-xs font-medium text-slate-600 mb-1">
+                Appointment Type
+              </label>
               <div className="flex gap-3">
                 {(['in-person', 'telemedicine'] as const).map((t) => (
                   <label key={t} className="flex items-center gap-1.5 text-sm cursor-pointer">
@@ -192,7 +218,9 @@ function BookingFlow() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Notes (optional)</label>
+              <label className="block text-xs font-medium text-slate-600 mb-1">
+                Notes (optional)
+              </label>
               <textarea
                 rows={2}
                 value={form.notes}
@@ -203,7 +231,9 @@ function BookingFlow() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Payment Method</label>
+              <label className="block text-xs font-medium text-slate-600 mb-1">
+                Payment Method
+              </label>
               <div className="flex gap-3">
                 {(['stellar', 'traditional'] as const).map((m) => (
                   <label key={m} className="flex items-center gap-1.5 text-sm cursor-pointer">
@@ -222,7 +252,8 @@ function BookingFlow() {
 
             <div className="rounded-lg bg-slate-50 p-3 text-sm">
               <p className="text-slate-600">
-                <span className="font-medium">Dr. {doctor.name}</span> · {new Date(slot.datetime).toLocaleString()}
+                <span className="font-medium">Dr. {doctor.name}</span> ·{' '}
+                {new Date(slot.datetime).toLocaleString()}
               </p>
               <p className="text-slate-500 text-xs mt-0.5">Fee: {FEE} XLM</p>
             </div>

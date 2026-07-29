@@ -4,23 +4,23 @@
 
 /* ─── Design tokens ─────────────────────────────────────────────── */
 :root {
-  --green:        #00C896;
-  --green-dim:    #00A07A;
-  --green-glow:   rgba(0, 200, 150, 0.18);
+  --green: #00c896;
+  --green-dim: #00a07a;
+  --green-glow: rgba(0, 200, 150, 0.18);
   --green-subtle: rgba(0, 200, 150, 0.08);
 
-  --bg-base:    #0B0E0D;
-  --bg-raised:  #111614;
-  --bg-card:    #161B19;
-  --bg-inset:   #1A201E;
-  --bg-hover:   #1F2724;
+  --bg-base: #0b0e0d;
+  --bg-raised: #111614;
+  --bg-card: #161b19;
+  --bg-inset: #1a201e;
+  --bg-hover: #1f2724;
 
-  --border:       rgba(255,255,255,0.07);
-  --border-focus: rgba(0,200,150,0.35);
+  --border: rgba(255, 255, 255, 0.07);
+  --border-focus: rgba(0, 200, 150, 0.35);
 
-  --text-1: #F0F5F3;
-  --text-2: #8E9E99;
-  --text-3: #4E5E5A;
+  --text-1: #f0f5f3;
+  --text-2: #8e9e99;
+  --text-3: #4e5e5a;
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -29,45 +29,77 @@
 }
 
 /* ─── Reset & base ──────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-html { scroll-behavior: smooth; font-feature-settings: 'cv11', 'ss01'; }
+html {
+  scroll-behavior: smooth;
+  font-feature-settings: 'cv11', 'ss01';
+}
 
 body {
   background-color: var(--bg-base);
   color: var(--text-1);
-  font-family: var(--font-geist-sans), -apple-system, sans-serif;
+  font-family:
+    var(--font-geist-sans),
+    -apple-system,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-::selection { background: rgba(0,200,150,0.25); color: #fff; }
+::selection {
+  background: rgba(0, 200, 150, 0.25);
+  color: #fff;
+}
 
 /* ─── Scrollbar ─────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(0,200,150,0.3); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(0,200,150,0.5); }
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 200, 150, 0.3);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 200, 150, 0.5);
+}
 
 /* ─── Component layer ───────────────────────────────────────────── */
 @layer components {
-
   /* ── Buttons ── */
   .btn {
     @apply inline-flex items-center justify-center gap-2 font-semibold
            transition-all duration-150 select-none outline-none cursor-pointer;
     border-radius: var(--radius-md);
   }
-  .btn:active { transform: scale(0.97); }
-  .btn:focus-visible { ring: 2px solid var(--green); ring-offset: 2px; ring-offset-color: var(--bg-base); }
+  .btn:active {
+    transform: scale(0.97);
+  }
+  .btn:focus-visible {
+    ring: 2px solid var(--green);
+    ring-offset: 2px;
+    ring-offset-color: var(--bg-base);
+  }
 
   .btn-primary {
     @apply btn bg-[--green] text-[#030D09] text-sm font-bold px-5 py-2.5;
-    box-shadow: 0 0 0 1px rgba(0,200,150,0.2), 0 1px 2px rgba(0,0,0,0.4);
+    box-shadow:
+      0 0 0 1px rgba(0, 200, 150, 0.2),
+      0 1px 2px rgba(0, 0, 0, 0.4);
   }
   .btn-primary:hover {
-    background-color: #00DCA6;
-    box-shadow: 0 0 16px var(--green-glow), 0 0 0 1px rgba(0,200,150,0.3);
+    background-color: #00dca6;
+    box-shadow:
+      0 0 16px var(--green-glow),
+      0 0 0 1px rgba(0, 200, 150, 0.3);
   }
 
   .btn-secondary {
@@ -76,7 +108,7 @@ body {
     background: var(--green-subtle);
   }
   .btn-secondary:hover {
-    background: rgba(0,200,150,0.14);
+    background: rgba(0, 200, 150, 0.14);
     border-color: var(--green);
   }
 
@@ -93,7 +125,10 @@ body {
     @apply btn w-8 h-8 p-0 text-[--text-3];
     background: transparent;
   }
-  .btn-icon:hover { color: var(--text-1); background: var(--bg-hover); }
+  .btn-icon:hover {
+    color: var(--text-1);
+    background: var(--bg-hover);
+  }
 
   /* ── Cards ── */
   .card {
@@ -105,11 +140,16 @@ body {
 
   .card-interactive {
     @apply card cursor-pointer;
-    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s,
+      transform 0.15s;
   }
   .card-interactive:hover {
     border-color: var(--border-focus);
-    box-shadow: 0 0 0 1px var(--border-focus), 0 4px 24px rgba(0,0,0,0.35);
+    box-shadow:
+      0 0 0 1px var(--border-focus),
+      0 4px 24px rgba(0, 0, 0, 0.35);
     transform: translateY(-1px);
   }
 
@@ -117,7 +157,7 @@ body {
     background: rgba(22, 27, 25, 0.7);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255,255,255,0.07);
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: var(--radius-lg);
   }
 
@@ -128,25 +168,25 @@ body {
   }
   .badge-green {
     @apply badge;
-    background: rgba(0,200,150,0.12);
-    color: #00C896;
-    border: 1px solid rgba(0,200,150,0.2);
+    background: rgba(0, 200, 150, 0.12);
+    color: #00c896;
+    border: 1px solid rgba(0, 200, 150, 0.2);
   }
   .badge-yellow {
     @apply badge;
-    background: rgba(234,179,8,0.12);
-    color: #EAB308;
-    border: 1px solid rgba(234,179,8,0.2);
+    background: rgba(234, 179, 8, 0.12);
+    color: #eab308;
+    border: 1px solid rgba(234, 179, 8, 0.2);
   }
   .badge-red {
     @apply badge;
-    background: rgba(239,68,68,0.12);
-    color: #F87171;
-    border: 1px solid rgba(239,68,68,0.2);
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
   }
   .badge-muted {
     @apply badge;
-    background: rgba(255,255,255,0.06);
+    background: rgba(255, 255, 255, 0.06);
     color: var(--text-2);
     border: 1px solid var(--border);
   }
@@ -160,16 +200,24 @@ body {
     border-radius: var(--radius-md);
     padding: 0.625rem 0.875rem;
   }
-  .input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(0,200,150,0.1); }
+  .input:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(0, 200, 150, 0.1);
+  }
 
   /* ── Navigation ── */
   .nav-item {
     @apply flex items-center gap-2.5 text-sm font-medium px-3 py-2 w-full;
     color: var(--text-2);
     border-radius: var(--radius-md);
-    transition: background 0.12s, color 0.12s;
+    transition:
+      background 0.12s,
+      color 0.12s;
   }
-  .nav-item:hover { background: var(--bg-hover); color: var(--text-1); }
+  .nav-item:hover {
+    background: var(--bg-hover);
+    color: var(--text-1);
+  }
   .nav-item-active {
     @apply nav-item;
     background: var(--green-subtle);
@@ -179,7 +227,9 @@ body {
   }
 
   /* ── Dividers ── */
-  .divider { border-top: 1px solid var(--border); }
+  .divider {
+    border-top: 1px solid var(--border);
+  }
 
   /* ── Section label ── */
   .eyebrow {
@@ -193,14 +243,29 @@ body {
     background-size: 200% 100%;
     animation: shimmer 1.6s infinite;
   }
-  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
 }
 
 /* ─── Background helpers ────────────────────────────────────────── */
-.bg-page   { background: var(--bg-base); }
-.bg-raised { background: var(--bg-raised); }
-.bg-card   { background: var(--bg-card); }
-.bg-inset  { background: var(--bg-inset); }
+.bg-page {
+  background: var(--bg-base);
+}
+.bg-raised {
+  background: var(--bg-raised);
+}
+.bg-card {
+  background: var(--bg-card);
+}
+.bg-inset {
+  background: var(--bg-inset);
+}
 
 /* ─── Noise / grain overlay ─────────────────────────────────────── */
 .grain::before {
@@ -216,27 +281,39 @@ body {
 /* ─── Hero gradient ─────────────────────────────────────────────── */
 .hero-gradient {
   background:
-    radial-gradient(ellipse 70% 40% at 60% -10%, rgba(0,200,150,0.12) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 60% at 80% 50%, rgba(0,200,150,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 40% at 60% -10%, rgba(0, 200, 150, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 50%, rgba(0, 200, 150, 0.04) 0%, transparent 50%),
     var(--bg-base);
 }
 
 /* ─── Dot grid ──────────────────────────────────────────────────── */
 .dot-grid {
-  background-image: radial-gradient(circle, rgba(0,200,150,0.12) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(0, 200, 150, 0.12) 1px, transparent 1px);
   background-size: 28px 28px;
 }
 
 /* ─── Glow helpers ──────────────────────────────────────────────── */
-.glow-green { box-shadow: 0 0 24px var(--green-glow); }
-.glow-green-lg { box-shadow: 0 0 60px rgba(0,200,150,0.2), 0 0 120px rgba(0,200,150,0.07); }
-.text-green { color: var(--green); }
-.border-green { border-color: var(--border-focus); }
+.glow-green {
+  box-shadow: 0 0 24px var(--green-glow);
+}
+.glow-green-lg {
+  box-shadow:
+    0 0 60px rgba(0, 200, 150, 0.2),
+    0 0 120px rgba(0, 200, 150, 0.07);
+}
+.text-green {
+  color: var(--green);
+}
+.border-green {
+  border-color: var(--border-focus);
+}
 
 /* ─── Sidebar ───────────────────────────────────────────────────── */
 .sidebar {
   position: fixed;
-  top: 0; left: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  bottom: 0;
   width: 240px;
   background: var(--bg-raised);
   border-right: 1px solid var(--border);
@@ -264,22 +341,31 @@ body {
   color: var(--text-1);
   border-bottom: 1px solid var(--border);
 }
-.data-table tr:last-child td { border-bottom: none; }
-.data-table tbody tr { transition: background 0.1s; }
-.data-table tbody tr:hover { background: var(--bg-hover); }
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+.data-table tbody tr {
+  transition: background 0.1s;
+}
+.data-table tbody tr:hover {
+  background: var(--bg-hover);
+}
 
 /* ─── Hover surface helpers ─────────────────────────────────────── */
 .hover-inset {
   background: var(--bg-card);
   transition: background 0.15s;
 }
-.hover-inset:hover { background: var(--bg-inset); }
+.hover-inset:hover {
+  background: var(--bg-inset);
+}
 
 /* ─── Timeline ──────────────────────────────────────────────────── */
 .timeline-item:not(:last-child)::before {
   content: '';
   position: absolute;
-  left: 7px; top: 20px;
+  left: 7px;
+  top: 20px;
   width: 1px;
   height: calc(100% - 4px);
   background: var(--border);

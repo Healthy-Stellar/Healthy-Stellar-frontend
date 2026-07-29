@@ -30,6 +30,6 @@ export const useAuthStore = create<AuthState>()(
         walletAddress: state.walletAddress,
         role: state.role,
       }),
-    }
-  )
+    },
+  ),
 );

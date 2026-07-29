@@ -7,7 +7,7 @@ import { Appointment } from '@/types';
 import { Calendar, Clock } from 'lucide-react';
 
 const STATUS_COLORS: Record<Appointment['status'], string> = {
-  pending:   'bg-yellow-100 text-yellow-700',
+  pending: 'bg-yellow-100 text-yellow-700',
   confirmed: 'bg-blue-100 text-blue-700',
   completed: 'bg-green-100 text-green-700',
   cancelled: 'bg-red-100 text-red-700',
@@ -42,7 +42,9 @@ function AppointmentRow({ appointment }: { appointment: Appointment }) {
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
-        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[appointment.status]}`}>
+        <span
+          className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[appointment.status]}`}
+        >
           {appointment.status}
         </span>
         {canCancel && (
@@ -68,13 +70,11 @@ export default function PatientAppointmentsPage() {
     enabled: !!publicKey,
   });
 
-  const upcoming = appointments?.filter(
-    (a) => a.status !== 'cancelled' && a.status !== 'completed'
-  ) ?? [];
+  const upcoming =
+    appointments?.filter((a) => a.status !== 'cancelled' && a.status !== 'completed') ?? [];
 
-  const past = appointments?.filter(
-    (a) => a.status === 'cancelled' || a.status === 'completed'
-  ) ?? [];
+  const past =
+    appointments?.filter((a) => a.status === 'cancelled' || a.status === 'completed') ?? [];
 
   if (isLoading) {
     return (
@@ -94,9 +94,7 @@ export default function PatientAppointmentsPage() {
       </div>
 
       <section>
-        <h2 className="text-sm font-semibold text-slate-700 mb-3">
-          Upcoming ({upcoming.length})
-        </h2>
+        <h2 className="text-sm font-semibold text-slate-700 mb-3">Upcoming ({upcoming.length})</h2>
         {upcoming.length === 0 ? (
           <p className="text-sm text-slate-400 text-center py-6 border border-dashed border-slate-200 rounded-xl">
             No upcoming appointments.
@@ -112,9 +110,7 @@ export default function PatientAppointmentsPage() {
 
       {past.length > 0 && (
         <section>
-          <h2 className="text-sm font-semibold text-slate-700 mb-3">
-            Past ({past.length})
-          </h2>
+          <h2 className="text-sm font-semibold text-slate-700 mb-3">Past ({past.length})</h2>
           <div className="space-y-3 opacity-70">
             {past.map((appt) => (
               <AppointmentRow key={appt.id} appointment={appt} />
