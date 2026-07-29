@@ -13,6 +13,7 @@ import {
 import { KpiSkeleton } from '@/components/ui/KpiSkeleton';
 import { DashboardSkeleton } from '@/components/ui/DashboardSkeleton';
 import { AppointmentSkeleton } from '@/components/ui/AppointmentSkeleton';
+import { EmptyRecordState } from '@/components/records/EmptyRecordState';
 
 /* ─── Sparkline ─────────────────────────────────────────────────── */
 function Sparkline({ values, color }: { values: number[]; color: string }) {
@@ -209,6 +210,8 @@ export default function PatientDashboard() {
 
           {recordsLoading ? (
             <DashboardSkeleton rows={4} />
+          ) : records.length === 0 ? (
+            <EmptyRecordState />
           ) : (
             <table className="data-table w-full">
               <thead>
