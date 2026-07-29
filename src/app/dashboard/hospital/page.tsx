@@ -63,11 +63,20 @@ function AdmissionBadge({ status }: { status: PatientAdmission['status'] }) {
 }
 
 /* ─── Empty / Error state ───────────────────────────────────────── */
-function EmptyState({ message }: { message: string }) {
+function EmptyState({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
     <div className="py-12 flex flex-col items-center gap-2 text-center">
       <AlertCircle className="w-8 h-8 mb-1" style={{ color: 'var(--text-3)' }} />
       <p className="text-sm text-text-2">{message}</p>
+      {onRetry && (
+        <button
+          onClick={onRetry}
+          className="mt-2 btn-secondary rounded-[6px] text-2xs py-1 px-2.5 flex items-center gap-1 hover:bg-surface-hover transition-all"
+        >
+          <RefreshCw className="w-3 h-3" />
+          Retry
+        </button>
+      )}
     </div>
   );
 }
@@ -119,39 +128,53 @@ function HospitalDashboardContent() {
   const [bulkLoading,   setBulkLoading]   = useState(false);
   const [activeTab,     setActiveTab]     = useState<'staff' | 'admissions' | 'compliance'>('staff');
 
-  /* ── Fetch helpers ────────────────────────────────────────────── */
-  const loadData = useCallback(() => {
+  // Fetch helpers
+  const loadMetrics = useCallback(() => {
     if (!publicKey) return;
-
     setLoadingMetrics(true);
-    setLoadingStaff(true);
-    setLoadingAdmissions(true);
-    setLoadingCompliance(true);
     setErrorMetrics(false);
-    setErrorStaff(false);
-    setErrorAdmissions(false);
-    setErrorCompliance(false);
-
     fetchHospitalMetrics(publicKey)
       .then(setMetrics)
       .catch(() => setErrorMetrics(true))
       .finally(() => setLoadingMetrics(false));
+  }, [publicKey]);
 
+  const loadStaff = useCallback(() => {
+    if (!publicKey) return;
+    setLoadingStaff(true);
+    setErrorStaff(false);
     fetchStaff(publicKey)
       .then(setStaff)
       .catch(() => setErrorStaff(true))
       .finally(() => setLoadingStaff(false));
+  }, [publicKey]);
 
+  const loadAdmissions = useCallback(() => {
+    if (!publicKey) return;
+    setLoadingAdmissions(true);
+    setErrorAdmissions(false);
     fetchAdmissions(publicKey)
       .then(setAdmissions)
       .catch(() => setErrorAdmissions(true))
       .finally(() => setLoadingAdmissions(false));
+  }, [publicKey]);
 
+  const loadCompliance = useCallback(() => {
+    if (!publicKey) return;
+    setLoadingCompliance(true);
+    setErrorCompliance(false);
     fetchComplianceReports(publicKey)
       .then(setCompliance)
       .catch(() => setErrorCompliance(true))
       .finally(() => setLoadingCompliance(false));
   }, [publicKey]);
+
+  const loadData = useCallback(() => {
+    loadMetrics();
+    loadStaff();
+    loadAdmissions();
+    loadCompliance();
+  }, [loadMetrics, loadStaff, loadAdmissions, loadCompliance]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
@@ -220,9 +243,10 @@ function HospitalDashboardContent() {
         <div className="flex items-center gap-2.5">
           <button
             onClick={loadData}
-            className="btn-secondary rounded-[9px] text-xs py-2 px-3.5 flex items-center gap-1.5"
+            disabled={loadingMetrics || loadingStaff || loadingAdmissions || loadingCompliance}
+            className="btn-secondary rounded-[9px] text-xs py-2 px-3.5 flex items-center gap-1.5 disabled:opacity-50"
           >
-            <RefreshCw className="w-3.5 h-3.5" />
+            <RefreshCw className={`w-3.5 h-3.5 ${loadingMetrics || loadingStaff || loadingAdmissions || loadingCompliance ? 'animate-spin' : ''}`} />
             Refresh
           </button>
           <button className="btn-primary rounded-[9px] text-xs py-2 px-3.5 flex items-center gap-1.5">
@@ -236,10 +260,19 @@ function HospitalDashboardContent() {
       {loadingMetrics ? (
         <KpiSkeleton count={4} />
       ) : errorMetrics ? (
-        <div className="rounded-[12px] px-4 py-3.5 flex items-center gap-3 mb-6"
+        <div className="rounded-[12px] px-4 py-3.5 flex items-center justify-between gap-3 mb-6"
              style={{ background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.2)' }}>
-          <AlertCircle className="w-4 h-4 shrink-0" style={{ color: '#F87171' }} />
-          <p className="text-sm text-text-1">Unable to load metrics. Check your API configuration.</p>
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-4 h-4 shrink-0" style={{ color: '#F87171' }} />
+            <p className="text-sm text-text-1">Unable to load metrics. Check your API configuration.</p>
+          </div>
+          <button
+            onClick={loadMetrics}
+            className="btn-secondary rounded-[6px] text-2xs py-1.5 px-3 flex items-center gap-1 hover:bg-surface-hover transition-all"
+          >
+            <RefreshCw className="w-3 h-3" />
+            Retry
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
@@ -362,7 +395,7 @@ function HospitalDashboardContent() {
           {loadingStaff ? (
             <TableSkeleton rows={5} />
           ) : errorStaff ? (
-            <EmptyState message="Could not load staff data. The API may be unavailable." />
+            <EmptyState message="Could not load staff data. The API may be unavailable." onRetry={loadStaff} />
           ) : filteredStaff.length === 0 ? (
             <EmptyState message={staffSearch ? 'No staff match your search.' : 'No staff members found.'} />
           ) : (
@@ -465,7 +498,7 @@ function HospitalDashboardContent() {
           {loadingAdmissions ? (
             <TableSkeleton rows={5} />
           ) : errorAdmissions ? (
-            <EmptyState message="Could not load admissions data. The API may be unavailable." />
+            <EmptyState message="Could not load admissions data. The API may be unavailable." onRetry={loadAdmissions} />
           ) : admissions.length === 0 ? (
             <EmptyState message="No admissions found." />
           ) : (
@@ -567,7 +600,7 @@ function HospitalDashboardContent() {
             {loadingCompliance ? (
               <TableSkeleton rows={4} />
             ) : errorCompliance ? (
-              <EmptyState message="Could not load compliance reports. The API may be unavailable." />
+              <EmptyState message="Could not load compliance reports. The API may be unavailable." onRetry={loadCompliance} />
             ) : compliance.length === 0 ? (
               <EmptyState message="No compliance reports available." />
             ) : (
