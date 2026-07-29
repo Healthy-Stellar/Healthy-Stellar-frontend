@@ -476,6 +476,7 @@ function AdminDashboardContent() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search users..."
+                    aria-label="Search users"
                     className="w-full pl-8 pr-3 py-2 text-xs rounded-[9px] outline-none"
                     style={{
                       background: 'var(--bg-inset)',

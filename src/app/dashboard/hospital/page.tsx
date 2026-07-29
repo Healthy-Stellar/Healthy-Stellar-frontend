@@ -397,6 +397,7 @@ function HospitalDashboardContent() {
               <Search className="w-3.5 h-3.5 text-text-3 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 placeholder="Search by name or department…"
+                aria-label="Search by name or department"
                 className="input text-xs py-1.5 pl-8 w-52"
                 value={staffSearch}
                 onChange={(e) => setStaffSearch(e.target.value)}

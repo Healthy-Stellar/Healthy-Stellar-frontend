@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { MedicalRecord } from '@/types';
 import { shareRecord } from '@/services/api.service';
 import RecordDetailDrawer from './RecordDetailDrawer';
@@ -10,7 +10,7 @@ interface Props {
   record: MedicalRecord;
 }
 
-export default function RecordCard({ record }: Props) {
+function RecordCard({ record }: Props) {
   const { toast } = useToast();
   const [showDrawer, setShowDrawer] = useState(false);
   const [sharing, setSharing] = useState(false);
@@ -66,3 +66,5 @@ export default function RecordCard({ record }: Props) {
     </>
   );
 }
+
+export default memo(RecordCard);

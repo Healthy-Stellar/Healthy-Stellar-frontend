@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Appointment } from '@/types';
 import { updateAppointmentStatus } from '@/services/api.service';
@@ -21,7 +21,7 @@ const STATUS_COLORS: Record<Appointment['status'], string> = {
   cancelled: 'bg-red-100 text-red-700',
 };
 
-export default function AppointmentCard({ appointment: rawAppointment }: Props) {
+function AppointmentCard({ appointment: rawAppointment }: Props) {
   const appointment = withVideoRoom(rawAppointment);
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState(false);
@@ -144,3 +144,5 @@ export default function AppointmentCard({ appointment: rawAppointment }: Props) 
     </div>
   );
 }
+
+export default memo(AppointmentCard);
