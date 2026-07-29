@@ -1,4 +1,4 @@
-import { Appointment } from '@/types';
+import type { Appointment } from '@/types';
 
 const DAILY_DOMAIN = process.env.NEXT_PUBLIC_DAILY_DOMAIN || 'healthystellar';
 const APPOINTMENT_DURATION_MS = 60 * 60 * 1000; // matches BookingConfirmation's ICS event length

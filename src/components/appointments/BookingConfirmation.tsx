@@ -1,6 +1,6 @@
 'use client';
 
-import { Appointment } from '@/types';
+import type { Appointment } from '@/types';
 
 interface Props {
   appointment: Appointment;

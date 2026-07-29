@@ -4,7 +4,7 @@ import { useState, useRef, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { bulkImportRecords } from '@/services/api.service';
 import { useToast } from '@/hooks/useToast';
-import { BulkImportResponse } from '@/types';
+import type { BulkImportResponse } from '@/types';
 import { parseCSV, parseFHIR, validateRow, PreviewRow } from '@/lib/bulkRecordParser';
 import { Upload, FileText, X, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 

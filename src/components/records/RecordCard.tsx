@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { MedicalRecord } from '@/types';
+import type { MedicalRecord } from '@/types';
 import { shareRecord } from '@/services/api.service';
 import RecordDetailDrawer from './RecordDetailDrawer';
 import { useToast } from '@/hooks/useToast';

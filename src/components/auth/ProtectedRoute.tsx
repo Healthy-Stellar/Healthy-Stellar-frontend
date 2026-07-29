@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWalletStore } from '@/store/useWalletStore';
-import { UserRole } from '@/types';
+import type { UserRole } from '@/types';
 
 interface Props {
   requiredRole: UserRole;

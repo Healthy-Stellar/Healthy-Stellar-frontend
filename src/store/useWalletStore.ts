@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { UserRole } from '@/types';
+import type { UserRole } from '@/types';
 
 interface WalletState {
   publicKey: string | null;

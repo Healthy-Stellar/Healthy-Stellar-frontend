@@ -1,4 +1,4 @@
-import { BulkRecordImportRow } from '@/types';
+import type { BulkRecordImportRow } from '@/types';
 
 export function parseCSV(text: string): BulkRecordImportRow[] {
   const lines = text.split(/\r?\n/).filter((l) => l.trim());

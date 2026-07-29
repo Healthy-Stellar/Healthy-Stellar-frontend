@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { encryptFile, exportKey, hashBuffer } from '@/lib/crypto';
 import { uploadEncryptedRecord } from '@/services/api.service';
 import { useToast } from '@/hooks/useToast';
-import { EncryptedRecord } from '@/types';
+import type { EncryptedRecord } from '@/types';
 
 const ACCEPTED = ['application/pdf', 'image/jpeg', 'image/png'];
 const MAX_BYTES = 10 * 1024 * 1024; // 10 MB

@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { fetchSlots } from '@/services/api.service';
-import { TimeSlot } from '@/types';
+import type { TimeSlot } from '@/types';
 
 interface Props {
   doctorId: string;

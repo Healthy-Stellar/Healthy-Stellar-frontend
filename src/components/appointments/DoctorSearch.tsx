@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchDoctors } from '@/services/api.service';
-import { Doctor } from '@/types';
+import type { Doctor } from '@/types';
 import { Loader2 } from 'lucide-react';
 
 const SPECIALTIES = ['All', 'General', 'Cardiology', 'Dermatology', 'Neurology', 'Pediatrics'];

@@ -1,6 +1,6 @@
 'use client';
 
-import { MedicalRecord } from '@/types';
+import type { MedicalRecord } from '@/types';
 
 interface Props {
   record: MedicalRecord;
