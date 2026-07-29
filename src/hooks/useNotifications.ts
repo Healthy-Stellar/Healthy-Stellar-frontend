@@ -12,9 +12,9 @@ export interface NotificationEvent {
 }
 
 const EVENT_LABELS: Record<NotificationEventType, string> = {
-  access_request:       'New access request received',
+  access_request: 'New access request received',
   appointment_confirmed: 'Appointment confirmed',
-  record_shared:        'A medical record was shared with you',
+  record_shared: 'A medical record was shared with you',
 };
 
 interface UseNotificationsOptions {

@@ -75,11 +75,11 @@ Your application will be available at http://localhost:3000.
 
 Copy `.env.example` to `.env.local` before running the app. Each variable is described below.
 
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `NEXT_PUBLIC_API_URL` | **Yes** | — | Backend REST API base URL. Provided by the backend team. |
-| `NEXT_PUBLIC_STELLAR_NETWORK` | No | `testnet` | Stellar network to connect to. Accepted values: `testnet` \| `mainnet`. |
-| `NEXT_PUBLIC_HORIZON_URL` | No | `https://horizon-testnet.stellar.org` | Horizon API endpoint used to submit transactions and query the ledger. |
+| Variable                      | Required | Default                               | Description                                                             |
+| ----------------------------- | -------- | ------------------------------------- | ----------------------------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL`         | **Yes**  | —                                     | Backend REST API base URL. Provided by the backend team.                |
+| `NEXT_PUBLIC_STELLAR_NETWORK` | No       | `testnet`                             | Stellar network to connect to. Accepted values: `testnet` \| `mainnet`. |
+| `NEXT_PUBLIC_HORIZON_URL`     | No       | `https://horizon-testnet.stellar.org` | Horizon API endpoint used to submit transactions and query the ledger.  |
 
 ### How to obtain each value
 
@@ -105,13 +105,13 @@ Full API reference documenting all endpoints, request/response shapes, and authe
 
 ### Quick Overview
 
-| Endpoint Group | Base Path | Auth |
-|----------------|-----------|------|
-| Medical Records | `/records` | Public key |
-| Doctors & Slots | `/doctors` | Public key |
-| Appointments | `/appointments` | Public key |
-| Hospital Management | `/hospital` | Role: HOSPITAL |
-| Users | `/users` | Public key |
+| Endpoint Group      | Base Path       | Auth           |
+| ------------------- | --------------- | -------------- |
+| Medical Records     | `/records`      | Public key     |
+| Doctors & Slots     | `/doctors`      | Public key     |
+| Appointments        | `/appointments` | Public key     |
+| Hospital Management | `/hospital`     | Role: HOSPITAL |
+| Users               | `/users`        | Public key     |
 
 ## Switching to Mainnet
 

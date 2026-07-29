@@ -9,6 +9,8 @@
     "lint": "next lint",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "prepare": "husky"
   },
   "dependencies": {
@@ -44,6 +46,7 @@
     "lint-staged": "^15.2.10",
     "math-intrinsics": "^1.1.0",
     "postcss": "^8",
+    "prettier": "^3.9.6",
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.4.12",
     "ts-node": "^10.9.2",
