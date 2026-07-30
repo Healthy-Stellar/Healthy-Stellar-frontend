@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchAppointments, updateAppointmentStatus } from '@/services/api.service';
 import { useWalletStore } from '@/store/useWalletStore';
-import { Appointment } from '@/types';
+import type { Appointment } from '@/types';
 import { Calendar, Clock } from 'lucide-react';
 
 const STATUS_COLORS: Record<Appointment['status'], string> = {

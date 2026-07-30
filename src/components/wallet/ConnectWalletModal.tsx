@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useWalletStore } from '@/store/useWalletStore';
-import { UserRole } from '@/types';
+import type { UserRole } from '@/types';
 import api from '@/services/api.service';
 
 interface Props {

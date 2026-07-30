@@ -13,7 +13,7 @@ import { createAppointment } from '@/services/api.service';
 import { useWalletStore } from '@/store/useWalletStore';
 import { STELLAR_CONFIG } from '@/lib/stellar';
 import { withVideoRoom } from '@/lib/video';
-import { Doctor, TimeSlot, Appointment } from '@/types';
+import type { Doctor, TimeSlot, Appointment } from '@/types';
 import { TransactionBuilder, Networks, Operation, Asset } from '@stellar/stellar-sdk';
 
 type Step = 'search' | 'slots' | 'form' | 'confirmed';
@@ -30,7 +30,14 @@ function BookingFlow() {
   });
   const [confirmed, setConfirmed] = useState<Appointment | null>(null);
 
+  // Validation state
+  const [slotError, setSlotError] = useState('');
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+
   const FEE = 10; // XLM
+
+  // Derived validation: doctor is guaranteed by the step flow, slot must be chosen
+  const isFormValid = !!doctor && !!slot;
 
   const bookMutation = useMutation({
     mutationFn: async () => {
@@ -87,16 +94,26 @@ function BookingFlow() {
     },
   });
 
+  function handleSlotContinue() {
+    if (!slot) {
+      setSlotError('Please select a time slot before continuing.');
+      return;
+    }
+    setSlotError('');
+    setStep('form');
+  }
+
+  function handleSubmit() {
+    setSubmitAttempted(true);
+    if (!isFormValid) return;
+    bookMutation.mutate();
+  }
+
   if (step === 'confirmed' && confirmed) {
     return (
       <BookingConfirmation
         appointment={confirmed}
-        onDone={() => {
-          setStep('search');
-          setDoctor(null);
-          setSlot(null);
-          setConfirmed(null);
-        }}
+        onDone={() => { setStep('search'); setDoctor(null); setSlot(null); setConfirmed(null); setSubmitAttempted(false); }}
       />
     );
   }
@@ -127,24 +144,23 @@ function BookingFlow() {
 
       {step === 'slots' && doctor && (
         <div>
-          <button
-            onClick={() => setStep('search')}
-            className="text-xs text-slate-400 hover:text-slate-600 mb-3"
-          >
-            ← Back
-          </button>
-          <p className="font-semibold text-slate-900 mb-4">
-            Dr. {doctor.name} — {doctor.specialty}
-          </p>
-          <SlotPicker doctorId={doctor.id} selected={slot} onSelect={setSlot} />
-          {slot && (
-            <button
-              onClick={() => setStep('form')}
-              className="mt-4 w-full rounded-md bg-green py-2 text-sm font-semibold text-[#030D09] hover:bg-green-600"
-            >
-              Continue
-            </button>
+          <button onClick={() => setStep('search')} className="text-xs text-slate-400 hover:text-slate-600 mb-3">← Back</button>
+          <p className="font-semibold text-slate-900 mb-4">Dr. {doctor.name} — {doctor.specialty}</p>
+          <SlotPicker
+            doctorId={doctor.id}
+            selected={slot}
+            onSelect={(s) => { setSlot(s); setSlotError(''); }}
+          />
+          {/* Inline slot validation error */}
+          {slotError && (
+            <p role="alert" className="mt-2 text-xs text-red-600">{slotError}</p>
           )}
+          <button
+            onClick={handleSlotContinue}
+            className="mt-4 w-full rounded-md bg-green py-2 text-sm font-semibold text-[#030D09] hover:bg-green-600"
+          >
+            Continue
+          </button>
         </div>
       )}
 
@@ -157,6 +173,32 @@ function BookingFlow() {
             ← Back
           </button>
           <div className="space-y-4">
+            {/* Doctor field — read-only, shown as confirmation */}
+            <div>
+              <label className="block text-xs font-medium text-slate-600 mb-1">
+                Doctor <span className="text-red-500">*</span>
+              </label>
+              <div className="rounded-md border border-border bg-surface-inset px-3 py-2 text-sm text-text-1">
+                Dr. {doctor.name} — {doctor.specialty}
+              </div>
+              {submitAttempted && !doctor && (
+                <p role="alert" className="mt-1 text-xs text-red-600">A doctor selection is required.</p>
+              )}
+            </div>
+
+            {/* Slot field — read-only, shown as confirmation */}
+            <div>
+              <label className="block text-xs font-medium text-slate-600 mb-1">
+                Appointment Slot <span className="text-red-500">*</span>
+              </label>
+              <div className="rounded-md border border-border bg-surface-inset px-3 py-2 text-sm text-text-1">
+                {new Date(slot.datetime).toLocaleString()}
+              </div>
+              {submitAttempted && !slot && (
+                <p role="alert" className="mt-1 text-xs text-red-600">An appointment slot is required.</p>
+              )}
+            </div>
+
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">
                 Appointment Type
@@ -185,6 +227,7 @@ function BookingFlow() {
                 rows={2}
                 value={form.notes}
                 onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
+                placeholder="Any symptoms, questions, or context for the doctor…"
                 className="w-full rounded-md border border-border bg-surface-inset px-3 py-2 text-sm text-text-1 focus:outline-none focus:ring-2 focus:ring-border-focus"
               />
             </div>
@@ -218,13 +261,14 @@ function BookingFlow() {
             </div>
 
             {bookMutation.isError && (
-              <p className="text-xs text-red-600">Booking failed. Please try again.</p>
+              <p role="alert" className="text-xs text-red-600">Booking failed. Please try again.</p>
             )}
 
             <button
-              onClick={() => bookMutation.mutate()}
-              disabled={bookMutation.isPending}
-              className="w-full rounded-md bg-green py-2 text-sm font-semibold text-[#030D09] hover:bg-green-600 disabled:opacity-50"
+              onClick={handleSubmit}
+              disabled={bookMutation.isPending || (submitAttempted && !isFormValid)}
+              aria-disabled={bookMutation.isPending || (submitAttempted && !isFormValid)}
+              className="w-full rounded-md bg-green py-2 text-sm font-semibold text-[#030D09] hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {bookMutation.isPending ? 'Processing…' : 'Confirm & Pay'}
             </button>

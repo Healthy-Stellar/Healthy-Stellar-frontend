@@ -1,14 +1,12 @@
 'use client';
 
-import { memo, useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Appointment } from '@/types';
-import { updateAppointmentStatus } from '@/services/api.service';
+import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { Appointment, MedicalRecord } from '@/types';
+import { fetchRecords, updateAppointmentStatus } from '@/services/api.service';
 import { withVideoRoom, isVideoLinkActive } from '@/lib/video';
 import NewRecordForm from './NewRecordForm';
 import RecordDetailDrawer from '@/components/records/RecordDetailDrawer';
-import { fetchRecords } from '@/services/api.service';
-import { useQuery } from '@tanstack/react-query';
 
 interface Props {
   appointment: Appointment;
@@ -26,9 +24,7 @@ function AppointmentCard({ appointment: rawAppointment }: Props) {
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState(false);
   const [showRecordForm, setShowRecordForm] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState<import('@/types').MedicalRecord | null>(
-    null,
-  );
+  const [selectedRecord, setSelectedRecord] = useState<MedicalRecord | null>(null);
 
   const { data: patientRecords } = useQuery({
     queryKey: ['patient-records', appointment.patientAddress],

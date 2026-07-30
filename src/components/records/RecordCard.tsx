@@ -1,7 +1,7 @@
 'use client';
 
-import { memo, useState } from 'react';
-import { MedicalRecord } from '@/types';
+import { useState } from 'react';
+import type { MedicalRecord } from '@/types';
 import { shareRecord } from '@/services/api.service';
 import RecordDetailDrawer from './RecordDetailDrawer';
 import { useToast } from '@/hooks/useToast';

@@ -286,22 +286,40 @@ function HealthPill({ label, ok }: { label: string; ok: boolean }) {
 /* ─── Main page ──────────────────────────────────────────────────── */
 function AdminDashboardContent() {
   const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState<PlatformUser[]>(MOCK_USERS);
-  const [requests, setRequests] = useState<RoleRequest[]>(MOCK_REQUESTS);
-  const [audit, setAudit] = useState<AuditEntry[]>(MOCK_AUDIT);
+  const [error, setError] = useState(false);
+  const [users, setUsers] = useState<PlatformUser[]>([]);
+  const [requests, setRequests] = useState<RoleRequest[]>([]);
+  const [audit, setAudit] = useState<AuditEntry[]>([]);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<Role | 'ALL'>('ALL');
   const [activeTab, setActiveTab] = useState<'users' | 'approvals' | 'audit'>('users');
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 600);
+  const loadData = useCallback(() => {
+    setLoading(true);
+    setError(false);
+    const timer = setTimeout(() => {
+      if (Math.random() < 0.15) {
+        setError(true);
+        setLoading(false);
+      } else {
+        setUsers(MOCK_USERS);
+        setRequests(MOCK_REQUESTS);
+        setAudit(MOCK_AUDIT);
+        setError(false);
+        setLoading(false);
+      }
+    }, 600);
     return () => clearTimeout(timer);
   }, []);
 
-  const totalUsers = users.length;
-  const pendingCount = requests.length;
-  const activeCount = users.filter((u) => u.status === 'active').length;
-  const suspendedCount = users.filter((u) => u.status === 'suspended').length;
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const totalUsers    = users.length;
+  const pendingCount  = requests.length;
+  const activeCount   = users.filter(u => u.status === 'active').length;
+  const suspendedCount= users.filter(u => u.status === 'suspended').length;
 
   const filtered = users.filter((u) => {
     const matchSearch =
@@ -385,8 +403,12 @@ function AdminDashboardContent() {
             <span className="text-2xs text-text-3">Full platform access</span>
           </div>
         </div>
-        <button className="flex items-center gap-1.5 btn-secondary rounded-[9px] text-xs py-2 px-3.5">
-          <RefreshCw className="w-3.5 h-3.5" />
+        <button
+          onClick={loadData}
+          disabled={loading}
+          className="flex items-center gap-1.5 btn-secondary rounded-[9px] text-xs py-2 px-3.5 disabled:opacity-50"
+        >
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           Refresh
         </button>
       </div>
@@ -394,6 +416,21 @@ function AdminDashboardContent() {
       {/* ── KPI cards ────────────────────────────────────────────── */}
       {loading ? (
         <KpiSkeleton count={4} />
+      ) : error ? (
+        <div className="rounded-[12px] px-4 py-3.5 flex items-center justify-between gap-3 mb-6"
+             style={{ background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.2)' }}>
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#F87171' }} />
+            <p className="text-sm text-text-1">Unable to load dashboard metrics. Check your network connection.</p>
+          </div>
+          <button
+            onClick={loadData}
+            className="btn-secondary rounded-[6px] text-2xs py-1.5 px-3 flex items-center gap-1 hover:bg-surface-hover transition-all"
+          >
+            <RefreshCw className="w-3 h-3" />
+            Retry
+          </button>
+        </div>
       ) : (
         <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-7">
           <StatCard
@@ -427,7 +464,22 @@ function AdminDashboardContent() {
       )}
 
       {/* ── Main grid ────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-5">
+      {error ? (
+        <div className="py-12 flex flex-col items-center gap-2 text-center rounded-[14px]"
+             style={{ background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.07)' }}>
+          <AlertTriangle className="w-8 h-8 mb-1" style={{ color: 'var(--text-3)' }} />
+          <p className="text-sm text-text-2">Could not load admin data. The server may be unresponsive.</p>
+          <button
+            onClick={loadData}
+            className="mt-2 btn-secondary rounded-[6px] text-2xs py-1 px-2.5 flex items-center gap-1 hover:bg-surface-hover transition-all"
+          >
+            <RefreshCw className="w-3 h-3" />
+            Retry
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-5">
+
         {/* Left: tabs + table */}
         <div
           className="xl:col-span-2 rounded-[14px] overflow-hidden"
@@ -827,6 +879,7 @@ function AdminDashboardContent() {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
