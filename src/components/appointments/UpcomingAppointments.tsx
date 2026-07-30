@@ -15,6 +15,8 @@ export default function UpcomingAppointments() {
   const { toast } = useToast();
   const [appointmentToCancel, setAppointmentToCancel] = useState<Appointment | null>(null);
 
+  const queryClient = useQueryClient();
+
   const { data: appointments, isLoading } = useQuery({
     queryKey: ['patient-appointments', publicKey],
     queryFn: () => fetchAppointments(publicKey!, 'patient'),
