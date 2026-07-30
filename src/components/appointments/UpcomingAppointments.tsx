@@ -1,17 +1,36 @@
 'use client';
 
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchAppointments, updateAppointmentStatus } from '@/services/api.service';
+import { fetchAppointments, cancelAppointment } from '@/services/api.service';
 import { useWalletStore } from '@/store/useWalletStore';
 import { withVideoRoom, isVideoLinkActive } from '@/lib/video';
+import { useToast } from '@/hooks/useToast';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
+import type { Appointment } from '@/types';
 
 export default function UpcomingAppointments() {
   const { publicKey } = useWalletStore();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [appointmentToCancel, setAppointmentToCancel] = useState<Appointment | null>(null);
 
   const { data: appointments, isLoading } = useQuery({
     queryKey: ['patient-appointments', publicKey],
     queryFn: () => fetchAppointments(publicKey!, 'patient'),
     enabled: !!publicKey,
+  });
+
+  const cancelMutation = useMutation({
+    mutationFn: (id: string) => cancelAppointment(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['patient-appointments', publicKey] });
+      toast('Appointment cancelled', 'success');
+      setAppointmentToCancel(null);
+    },
+    onError: () => {
+      toast('Failed to cancel appointment', 'error');
+    },
   });
 
   const upcoming =
@@ -56,7 +75,7 @@ export default function UpcomingAppointments() {
               </a>
             )}
             <button
-              onClick={() => cancelMutation.mutate(appt.id)}
+              onClick={() => setAppointmentToCancel(appt)}
               disabled={cancelMutation.isPending}
               className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
             >
@@ -65,6 +84,18 @@ export default function UpcomingAppointments() {
           </div>
         </div>
       ))}
+
+      {appointmentToCancel && (
+        <ConfirmDialog
+          title="Cancel appointment"
+          message={`Are you sure you want to cancel your appointment with Dr. ${appointmentToCancel.doctorName}?`}
+          confirmLabel="Cancel appointment"
+          cancelLabel="Keep appointment"
+          isLoading={cancelMutation.isPending}
+          onConfirm={() => cancelMutation.mutate(appointmentToCancel.id)}
+          onCancel={() => setAppointmentToCancel(null)}
+        />
+      )}
     </div>
   );
 }
