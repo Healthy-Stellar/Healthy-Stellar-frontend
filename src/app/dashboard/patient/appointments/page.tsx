@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchAppointments, updateAppointmentStatus } from '@/services/api.service';
 import { useWalletStore } from '@/store/useWalletStore';

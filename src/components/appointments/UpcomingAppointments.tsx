@@ -8,10 +8,19 @@ import { withVideoRoom, isVideoLinkActive } from '@/lib/video';
 export default function UpcomingAppointments() {
   const { publicKey } = useWalletStore();
 
+  const queryClient = useQueryClient();
+
   const { data: appointments, isLoading } = useQuery({
     queryKey: ['patient-appointments', publicKey],
     queryFn: () => fetchAppointments(publicKey!, 'patient'),
     enabled: !!publicKey,
+  });
+
+  const cancelMutation = useMutation({
+    mutationFn: (id: string) => updateAppointmentStatus(id, 'cancelled'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['patient-appointments', publicKey] });
+    },
   });
 
   const upcoming =
