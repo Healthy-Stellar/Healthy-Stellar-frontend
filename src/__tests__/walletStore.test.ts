@@ -1,7 +1,15 @@
 import { act } from '@testing-library/react';
 import { useWalletStore } from '@/store/useWalletStore';
 
+const STORAGE_KEY = 'wallet-store';
+
+const readPersisted = () => {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  return raw ? JSON.parse(raw).state : null;
+};
+
 beforeEach(() => {
+  localStorage.clear();
   useWalletStore.setState({
     publicKey: null,
     role: null,
@@ -59,5 +67,43 @@ describe('useWalletStore', () => {
     });
     expect(useWalletStore.getState().publicKey).toBe('GSECOND');
     expect(useWalletStore.getState().role).toBe('DOCTOR');
+  });
+
+  describe('persistence', () => {
+    it('persists wallet state to localStorage', () => {
+      act(() => {
+        useWalletStore.getState().setWallet('GPERSIST', 'PATIENT');
+      });
+      expect(readPersisted()).toEqual({
+        publicKey: 'GPERSIST',
+        role: 'PATIENT',
+        network: 'testnet',
+      });
+    });
+
+    it('persists cleared wallet after disconnect', () => {
+      act(() => {
+        useWalletStore.getState().setWallet('GPERSIST', 'PATIENT');
+        useWalletStore.getState().disconnect();
+      });
+      expect(readPersisted()).toEqual({ publicKey: null, role: null, network: 'testnet' });
+    });
+
+    it('rehydrates wallet state from localStorage', async () => {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          state: { publicKey: 'GREHYDRATED', role: 'DOCTOR', network: 'mainnet' },
+          version: 0,
+        }),
+      );
+      await act(async () => {
+        await useWalletStore.persist.rehydrate();
+      });
+      const { publicKey, role, network } = useWalletStore.getState();
+      expect(publicKey).toBe('GREHYDRATED');
+      expect(role).toBe('DOCTOR');
+      expect(network).toBe('mainnet');
+    });
   });
 });

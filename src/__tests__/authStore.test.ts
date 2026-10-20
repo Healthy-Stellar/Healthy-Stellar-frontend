@@ -1,7 +1,15 @@
 import { act } from '@testing-library/react';
 import { useAuthStore } from '@/store/authStore';
 
+const STORAGE_KEY = 'healthy-stellar-auth';
+
+const readPersisted = () => {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  return raw ? JSON.parse(raw).state : null;
+};
+
 beforeEach(() => {
+  localStorage.clear();
   useAuthStore.setState({
     walletAddress: null,
     role: null,
@@ -65,5 +73,45 @@ describe('useAuthStore', () => {
     });
     expect(useAuthStore.getState().role).toBe('HOSPITAL');
     expect(useAuthStore.getState().walletAddress).toBe('GHOSPITAL');
+  });
+
+  describe('persistence', () => {
+    it('persists wallet address and role to localStorage', () => {
+      act(() => {
+        useAuthStore.getState().setWalletAddress('GPERSIST');
+        useAuthStore.getState().setRole('DOCTOR');
+      });
+      expect(readPersisted()).toEqual({ walletAddress: 'GPERSIST', role: 'DOCTOR' });
+    });
+
+    it('does not persist the loading flag', () => {
+      act(() => {
+        useAuthStore.getState().setIsLoading(true);
+      });
+      expect(readPersisted()).not.toHaveProperty('isLoading');
+    });
+
+    it('persists cleared state after clearAuth', () => {
+      act(() => {
+        useAuthStore.getState().setWalletAddress('GPERSIST');
+        useAuthStore.getState().setRole('PATIENT');
+        useAuthStore.getState().clearAuth();
+      });
+      expect(readPersisted()).toEqual({ walletAddress: null, role: null });
+    });
+
+    it('rehydrates wallet address and role from localStorage', async () => {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ state: { walletAddress: 'GREHYDRATED', role: 'HOSPITAL' }, version: 0 }),
+      );
+      await act(async () => {
+        await useAuthStore.persist.rehydrate();
+      });
+      const { walletAddress, role, isLoading } = useAuthStore.getState();
+      expect(walletAddress).toBe('GREHYDRATED');
+      expect(role).toBe('HOSPITAL');
+      expect(isLoading).toBe(false);
+    });
   });
 });

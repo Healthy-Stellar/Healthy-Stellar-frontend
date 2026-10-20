@@ -2,9 +2,12 @@
 
 export const dynamic = 'force-dynamic';
 
+import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchAppointments, updateAppointmentStatus } from '@/services/api.service';
 import { useWalletStore } from '@/store/useWalletStore';
+import { useToast } from '@/hooks/useToast';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import type { Appointment } from '@/types';
 import { Calendar, Clock } from 'lucide-react';
 
@@ -17,10 +20,19 @@ const STATUS_COLORS: Record<Appointment['status'], string> = {
 
 function AppointmentRow({ appointment }: { appointment: Appointment }) {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const cancelMutation = useMutation({
     mutationFn: () => updateAppointmentStatus(appointment.id, 'cancelled'),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['patient-appointments'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });
+      toast('Appointment cancelled', 'success');
+      setConfirmOpen(false);
+    },
+    onError: () => {
+      toast('Failed to cancel appointment', 'error');
+    },
   });
 
   const canCancel = appointment.status === 'pending' || appointment.status === 'confirmed';
@@ -51,7 +63,7 @@ function AppointmentRow({ appointment }: { appointment: Appointment }) {
         </span>
         {canCancel && (
           <button
-            onClick={() => cancelMutation.mutate()}
+            onClick={() => setConfirmOpen(true)}
             disabled={cancelMutation.isPending}
             className="rounded-md border border-red-200 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
           >
@@ -59,6 +71,18 @@ function AppointmentRow({ appointment }: { appointment: Appointment }) {
           </button>
         )}
       </div>
+
+      {confirmOpen && (
+        <ConfirmDialog
+          title="Cancel appointment"
+          message={`Are you sure you want to cancel your appointment with Dr. ${appointment.doctorName}?`}
+          confirmLabel="Cancel appointment"
+          cancelLabel="Keep appointment"
+          isLoading={cancelMutation.isPending}
+          onConfirm={() => cancelMutation.mutate()}
+          onCancel={() => setConfirmOpen(false)}
+        />
+      )}
     </div>
   );
 }

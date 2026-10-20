@@ -1,18 +1,13 @@
 import type { Config } from 'jest';
+import nextJest from 'next/jest.js';
+
+// next/jest loads next.config + .env files, compiles TS/TSX with Next's SWC
+// transform and stubs CSS/image imports, so tests run like the Next.js app does.
+const createJestConfig = nextJest({ dir: './' });
 
 const config: Config = {
   testEnvironment: 'jest-environment-jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  transform: {
-    '^.+\\.(ts|tsx)$': [
-      'ts-jest',
-      {
-        tsconfig: {
-          jsx: 'react-jsx',
-        },
-      },
-    ],
-  },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     // stub Next.js internals & CSS
@@ -23,4 +18,4 @@ const config: Config = {
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/__mocks__/**'],
 };
 
-export default config;
+export default createJestConfig(config);
